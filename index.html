@@ -1,0 +1,1511 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta
+      name="description"
+      content="DSL-LLaDA adapts LLaDA-8B-Instruct for continuous denoising. Explore real matched-NFE generation traces from the public Beta1 checkpoint."
+    >
+    <title>DSL-LLaDA | Continuous Denoising for Masked Diffusion LMs</title>
+    <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #151816;
+        --muted: #5d665f;
+        --paper: #f6f8f6;
+        --white: #ffffff;
+        --line: #d8ddd8;
+        --dark: #ffffff;
+        --dark-soft: #f3f6f4;
+        --dark-line: #d8ded9;
+        --green: #2bd89e;
+        --green-deep: #087653;
+        --blue: #5d8fd8;
+        --blue-deep: #285ca8;
+        --yellow: #f2c14e;
+        --coral: #f07d67;
+        --radius: 6px;
+      }
+
+      * {
+        box-sizing: border-box;
+        letter-spacing: 0;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        line-height: 1.5;
+      }
+
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+
+      button,
+      a {
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 30;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 58px;
+        padding: 0 28px;
+        border-bottom: 1px solid rgba(21, 24, 22, 0.14);
+        background: rgba(247, 248, 245, 0.94);
+        backdrop-filter: blur(12px);
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: baseline;
+        gap: 9px;
+        color: var(--ink);
+        font-size: 16px;
+        font-weight: 800;
+        text-decoration: none;
+      }
+
+      .brand small {
+        color: var(--green-deep);
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .nav {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .nav a {
+        text-decoration: none;
+      }
+
+      .nav a:hover,
+      .nav a:focus-visible {
+        color: var(--ink);
+      }
+
+      .hero {
+        background: var(--dark);
+        color: var(--ink);
+      }
+
+      .hero-inner {
+        width: min(1440px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 44px 0 38px;
+      }
+
+      .hero-heading {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 32px;
+        margin-bottom: 26px;
+      }
+
+      .hero-copy {
+        max-width: 820px;
+      }
+
+      .kicker {
+        margin: 0 0 10px;
+        color: var(--green-deep);
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 64px;
+        line-height: 0.98;
+        letter-spacing: 0;
+      }
+
+      .subtitle {
+        max-width: 760px;
+        margin: 13px 0 0;
+        color: #4f5b54;
+        font-size: 18px;
+      }
+
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 8px;
+        min-width: 300px;
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 40px;
+        padding: 0 14px;
+        border: 1px solid var(--dark-line);
+        border-radius: var(--radius);
+        background: var(--white);
+        color: var(--ink);
+        font-size: 13px;
+        font-weight: 800;
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      .button svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      .button.primary {
+        border-color: var(--green);
+        background: var(--green);
+        color: #07140e;
+      }
+
+      .button:hover,
+      .button:focus-visible {
+        border-color: #87958c;
+      }
+
+      .button.primary:hover,
+      .button.primary:focus-visible {
+        border-color: #a5ffdc;
+        background: #6df0c0;
+      }
+
+      .trace-shell {
+        border-top: 1px solid var(--dark-line);
+        border-bottom: 1px solid var(--dark-line);
+      }
+
+      .trace-head {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 18px;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid var(--dark-line);
+      }
+
+      .scenario-tabs {
+        display: flex;
+        gap: 5px;
+        min-width: 0;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+
+      .scenario-tabs::-webkit-scrollbar {
+        display: none;
+      }
+
+      .scenario-tab {
+        flex: 0 0 auto;
+        min-height: 34px;
+        padding: 0 12px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        background: transparent;
+        color: #657169;
+        font-size: 12px;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .scenario-tab:hover,
+      .scenario-tab:focus-visible {
+        color: var(--ink);
+      }
+
+      .scenario-tab[aria-selected="true"] {
+        border-color: #a8d8c4;
+        background: #e9f8f1;
+        color: var(--green-deep);
+      }
+
+      .protocol {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #657169;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 11px;
+        white-space: nowrap;
+      }
+
+      .protocol span + span {
+        padding-left: 10px;
+        border-left: 1px solid var(--dark-line);
+      }
+
+      .prompt-row {
+        display: grid;
+        grid-template-columns: 74px minmax(0, 1fr);
+        gap: 16px;
+        min-height: 82px;
+        padding: 14px 0;
+        border-bottom: 1px solid var(--dark-line);
+      }
+
+      .prompt-label {
+        color: #6d7971;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .prompt-text {
+        max-width: 1060px;
+        margin: 0;
+        overflow: hidden;
+        color: #29332d;
+        font-size: 14px;
+        line-height: 1.55;
+      }
+
+      .prompt-instruction {
+        display: block;
+        margin-bottom: 4px;
+        color: var(--ink);
+        font-weight: 750;
+      }
+
+      .prompt-source {
+        display: -webkit-box;
+        overflow: hidden;
+        color: #667168;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+      }
+
+      .trace-controls {
+        display: grid;
+        grid-template-columns: auto minmax(180px, 1fr) auto;
+        gap: 14px;
+        align-items: center;
+        padding: 12px 0;
+      }
+
+      .control-button {
+        min-width: 84px;
+      }
+
+      .timeline {
+        width: 100%;
+        accent-color: var(--green);
+        cursor: pointer;
+      }
+
+      .timeline:focus-visible {
+        outline: 2px solid var(--green);
+        outline-offset: 4px;
+      }
+
+      .timeline-readout {
+        min-width: 64px;
+        color: #5e6a62;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 11px;
+        text-align: right;
+      }
+
+      .comparison {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        padding-bottom: 14px;
+      }
+
+      .lane {
+        min-width: 0;
+        border: 1px solid var(--dark-line);
+        border-radius: var(--radius);
+        background: var(--white);
+        overflow: hidden;
+      }
+
+      .lane.dsl {
+        border-top: 3px solid var(--green);
+      }
+
+      .lane.llada {
+        border-top: 3px solid var(--blue);
+      }
+
+      .lane-head {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 14px;
+        align-items: start;
+        min-height: 78px;
+        padding: 16px 18px;
+        border-bottom: 1px solid var(--dark-line);
+      }
+
+      .lane-name {
+        margin: 0;
+        font-size: 16px;
+      }
+
+      .lane-method {
+        margin-top: 3px;
+        color: #91a097;
+        font-size: 12px;
+      }
+
+      .lane-score {
+        text-align: right;
+      }
+
+      .lane-score strong {
+        display: block;
+        color: var(--ink);
+        font-size: 21px;
+        line-height: 1.1;
+      }
+
+      .lane.dsl .lane-score strong {
+        color: var(--green-deep);
+      }
+
+      .lane.llada .lane-score strong {
+        color: var(--blue-deep);
+      }
+
+      .lane-score span {
+        color: #6d7971;
+        font-size: 11px;
+      }
+
+      .state-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        min-height: 44px;
+        padding: 10px 18px;
+        border-bottom: 1px solid #e2e7e3;
+        color: #344139;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 11px;
+      }
+
+      .state-row span:last-child {
+        color: #748078;
+        text-align: right;
+      }
+
+      .token-canvas {
+        --columns: 16;
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
+        grid-auto-rows: 28px;
+        gap: 5px;
+        min-height: 98px;
+        padding: 16px 18px;
+        overflow: hidden;
+        background: #f3f6f4;
+      }
+
+      .token {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 0;
+        height: 28px;
+        padding: 0 3px;
+        overflow: hidden;
+        border: 1px solid #cdd5cf;
+        border-radius: 3px;
+        background: #ffffff;
+        color: #29342d;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 9px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        transition:
+          background-color 180ms ease,
+          border-color 180ms ease,
+          color 180ms ease,
+          opacity 180ms ease;
+      }
+
+      .lane.dsl .token.conf-low {
+        border-color: #badfce;
+        background: #ecf8f2;
+      }
+
+      .lane.dsl .token.conf-mid {
+        border-color: #7acaa7;
+        background: #ceefdf;
+      }
+
+      .lane.dsl .token.conf-high {
+        border-color: #38aa7b;
+        background: #9ee2c5;
+        color: #103e2d;
+      }
+
+      .lane.llada .token.conf-low,
+      .lane.llada .token.conf-mid,
+      .lane.llada .token.conf-high {
+        border-color: #8eb2e5;
+        background: #dceaff;
+        color: #254a78;
+      }
+
+      .token.mask {
+        border-color: #d5dcd7;
+        background: #eaeeeb;
+        color: #8b978f;
+      }
+
+      .token.continuous {
+        border-color: #a7d7c2;
+        background: #e7f7ef;
+        color: var(--green-deep);
+      }
+
+      .token.changed {
+        border-color: var(--yellow);
+        box-shadow: inset 0 0 0 1px var(--yellow);
+      }
+
+      .token-more {
+        position: absolute;
+        right: 18px;
+        bottom: 14px;
+        padding: 2px 5px;
+        border-radius: 3px;
+        background: #e4e9e5;
+        color: #647068;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 9px;
+      }
+
+      .lane-output {
+        display: grid;
+        grid-template-columns: 84px minmax(0, 1fr);
+        gap: 16px;
+        min-height: 166px;
+        padding: 18px;
+        border-top: 1px solid var(--dark-line);
+      }
+
+      .output-label {
+        color: #748078;
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .output-text {
+        max-height: 132px;
+        margin: 0;
+        padding: 0;
+        overflow: auto;
+        border: 0;
+        background: transparent;
+        color: #253029;
+        font-family: inherit;
+        font-size: 14px;
+        line-height: 1.6;
+        white-space: pre-wrap;
+      }
+
+      .frame-copy {
+        display: grid;
+        grid-template-columns: 84px minmax(0, 1fr);
+        gap: 16px;
+        min-height: 220px;
+        padding: 18px;
+        border-bottom: 1px solid #e2e7e3;
+        background: #fbfcfb;
+      }
+
+      .frame-copy-label {
+        color: #748078;
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .frame-copy-text {
+        max-height: 184px;
+        margin: 0;
+        overflow: auto;
+        color: #344139;
+        font-size: 14px;
+        line-height: 1.6;
+        white-space: pre-wrap;
+      }
+
+      .trace-caption {
+        min-height: 42px;
+        margin: 0;
+        padding: 11px 0 0;
+        border-top: 1px solid var(--dark-line);
+        color: #657169;
+        font-size: 11px;
+      }
+
+      .trace-caption strong {
+        color: var(--ink);
+      }
+
+      .load-error {
+        padding: 32px 0;
+        color: #a63d2b;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 13px;
+      }
+
+      .band {
+        border-bottom: 1px solid var(--line);
+        background: var(--white);
+      }
+
+      .band.alt {
+        background: #f2f5f3;
+      }
+
+      .section-inner {
+        width: min(1120px, calc(100% - 48px));
+        margin: 0 auto;
+        padding: 72px 0;
+      }
+
+      .section-heading {
+        display: grid;
+        grid-template-columns: minmax(220px, 0.36fr) minmax(0, 0.64fr);
+        gap: 48px;
+        align-items: start;
+        margin-bottom: 42px;
+      }
+
+      .section-label {
+        margin: 0 0 8px;
+        color: var(--green-deep);
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      h2 {
+        margin: 0;
+        font-size: 36px;
+        line-height: 1.08;
+      }
+
+      .section-lead {
+        margin: 0;
+        color: #39413c;
+        font-size: 19px;
+        line-height: 1.55;
+      }
+
+      .process {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .process-step {
+        min-height: 178px;
+        padding: 22px 20px 24px;
+        border-right: 1px solid var(--line);
+      }
+
+      .process-step:last-child {
+        border-right: 0;
+      }
+
+      .step-index {
+        display: block;
+        margin-bottom: 34px;
+        color: var(--green-deep);
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .process-step h3 {
+        margin: 0 0 8px;
+        font-size: 16px;
+      }
+
+      .process-step p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .evidence-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 30px;
+      }
+
+      .evidence-item {
+        padding-top: 16px;
+        border-top: 3px solid var(--ink);
+      }
+
+      .evidence-item:nth-child(2) {
+        border-color: var(--green-deep);
+      }
+
+      .evidence-item:nth-child(3) {
+        border-color: var(--blue-deep);
+      }
+
+      .evidence-value {
+        display: block;
+        margin-bottom: 13px;
+        font-size: 28px;
+        font-weight: 800;
+        line-height: 1;
+      }
+
+      .evidence-item h3 {
+        margin: 0 0 8px;
+        font-size: 16px;
+      }
+
+      .evidence-item p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .resource-list {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        overflow: hidden;
+      }
+
+      .resource {
+        min-height: 132px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 18px;
+        border-right: 1px solid var(--line);
+        background: var(--white);
+        text-decoration: none;
+      }
+
+      .resource:last-child {
+        border-right: 0;
+      }
+
+      .resource svg {
+        width: 18px;
+        height: 18px;
+        color: var(--green-deep);
+      }
+
+      .resource span {
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+      .resource strong {
+        display: block;
+        margin-top: 4px;
+        font-size: 15px;
+      }
+
+      .resource:hover,
+      .resource:focus-visible {
+        background: #e8f7f0;
+      }
+
+      .quickstart {
+        display: grid;
+        grid-template-columns: minmax(220px, 0.34fr) minmax(0, 0.66fr);
+        gap: 48px;
+        margin-top: 42px;
+        align-items: start;
+      }
+
+      .quickstart h3 {
+        margin: 0 0 8px;
+        font-size: 18px;
+      }
+
+      .quickstart p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      pre {
+        margin: 0;
+        padding: 18px;
+        overflow: auto;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--white);
+        color: #263129;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 12px;
+        line-height: 1.6;
+      }
+
+      footer {
+        padding: 26px 24px 38px;
+        background: var(--paper);
+        color: var(--muted);
+        font-size: 12px;
+        text-align: center;
+      }
+
+      @media (max-width: 920px) {
+        .hero-heading {
+          display: block;
+        }
+
+        .hero-actions {
+          justify-content: flex-start;
+          margin-top: 20px;
+        }
+
+        h1 {
+          font-size: 52px;
+        }
+
+        .protocol {
+          display: none;
+        }
+
+        .trace-head {
+          grid-template-columns: 1fr;
+        }
+
+        .process {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .process-step:nth-child(2) {
+          border-right: 0;
+        }
+
+        .process-step:nth-child(-n + 2) {
+          border-bottom: 1px solid var(--line);
+        }
+
+        .resource-list {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .resource:nth-child(2) {
+          border-right: 0;
+        }
+
+        .resource:nth-child(-n + 2) {
+          border-bottom: 1px solid var(--line);
+        }
+      }
+
+      @media (max-width: 680px) {
+        .topbar {
+          position: static;
+          min-height: 52px;
+          padding: 0 16px;
+        }
+
+        .nav a:not(.nav-code) {
+          display: none;
+        }
+
+        .hero-inner,
+        .section-inner {
+          width: min(100% - 28px, 1120px);
+        }
+
+        .hero-inner {
+          padding: 30px 0 24px;
+        }
+
+        h1 {
+          font-size: 42px;
+        }
+
+        .subtitle {
+          font-size: 15px;
+        }
+
+        .hero-actions {
+          min-width: 0;
+        }
+
+        .hero-actions .button {
+          min-height: 38px;
+          padding: 0 11px;
+        }
+
+        .prompt-row {
+          grid-template-columns: 1fr;
+          gap: 3px;
+          min-height: 74px;
+        }
+
+        .trace-controls {
+          grid-template-columns: auto minmax(100px, 1fr) auto;
+          gap: 8px;
+        }
+
+        .control-button {
+          min-width: 42px;
+          width: 42px;
+          padding: 0;
+        }
+
+        .control-button span {
+          display: none;
+        }
+
+        .comparison {
+          grid-template-columns: repeat(2, minmax(92vw, 1fr));
+          overflow-x: auto;
+          scroll-snap-type: x mandatory;
+          scrollbar-width: thin;
+        }
+
+        .lane {
+          scroll-snap-align: start;
+        }
+
+        .token-canvas {
+          --columns: 12;
+          grid-auto-rows: 26px;
+          min-height: 82px;
+        }
+
+        .token {
+          height: 26px;
+        }
+
+        .lane-output {
+          grid-template-columns: 1fr;
+          gap: 3px;
+          min-height: 132px;
+          padding: 14px 16px;
+        }
+
+        .output-label {
+          display: none;
+        }
+
+        .output-text {
+          max-height: 104px;
+          font-size: 13px;
+        }
+
+        .frame-copy {
+          grid-template-columns: 1fr;
+          gap: 3px;
+          min-height: 172px;
+          padding: 14px 16px;
+        }
+
+        .frame-copy-label {
+          display: none;
+        }
+
+        .frame-copy-text {
+          max-height: 144px;
+          font-size: 13px;
+        }
+
+        .trace-caption {
+          display: none;
+        }
+
+        .section-inner {
+          padding: 52px 0;
+        }
+
+        .section-heading,
+        .quickstart {
+          grid-template-columns: 1fr;
+          gap: 18px;
+        }
+
+        h2 {
+          font-size: 30px;
+        }
+
+        .section-lead {
+          font-size: 16px;
+        }
+
+        .process,
+        .evidence-grid,
+        .resource-list {
+          grid-template-columns: 1fr;
+        }
+
+        .process-step,
+        .process-step:nth-child(2),
+        .resource,
+        .resource:nth-child(2) {
+          min-height: auto;
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+
+        .process-step:last-child,
+        .resource:last-child {
+          border-bottom: 0;
+        }
+
+        .step-index {
+          margin-bottom: 18px;
+        }
+
+        .resource {
+          min-height: 104px;
+        }
+
+        .evidence-grid {
+          gap: 24px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+
+        .token {
+          transition: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="index.html">DSL-LLaDA <small>Beta1</small></a>
+      <nav class="nav" aria-label="Primary navigation">
+        <a href="about.html">About</a>
+        <a href="https://huggingface.co/liddlefish/DSL-LLaDA-Beta1">Model</a>
+        <a class="nav-code" href="https://github.com/fengsxy/DSL-LLaDA">Code</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" id="trace" aria-labelledby="page-title">
+        <div class="hero-inner">
+          <div class="hero-heading">
+            <div class="hero-copy">
+              <p class="kicker">Continuous denoising for masked diffusion language models</p>
+              <h1 id="page-title">DSL-LLaDA</h1>
+              <p class="subtitle">
+                Scaling continuous denoising to an 8B masked diffusion LM with a short
+                adaptation run. The comparison below replays real Beta1 generation traces.
+              </p>
+            </div>
+            <div class="hero-actions" aria-label="Project links">
+              <button class="button primary" id="replay-top" type="button">
+                <i data-lucide="rotate-ccw" aria-hidden="true"></i>
+                <span>Replay trace</span>
+              </button>
+              <a class="button" href="https://huggingface.co/liddlefish/DSL-LLaDA-Beta1">
+                <i data-lucide="download" aria-hidden="true"></i>
+                <span>Model</span>
+              </a>
+              <a class="button" href="https://github.com/fengsxy/DSL-LLaDA">
+                <i data-lucide="github" aria-hidden="true"></i>
+                <span>Code</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="trace-shell" aria-label="Matched generation trace comparison">
+            <div class="trace-head">
+              <div class="scenario-tabs" id="scenario-tabs" role="tablist"></div>
+              <div class="protocol" aria-label="Generation protocol">
+                <span id="protocol-nfe">NFE --</span>
+                <span id="protocol-length">-- tokens</span>
+                <span id="protocol-seed">seed --</span>
+              </div>
+            </div>
+
+            <div class="prompt-row">
+              <div class="prompt-label">Prompt</div>
+              <p class="prompt-text" id="prompt-text">Loading trace data...</p>
+            </div>
+
+            <div class="trace-controls">
+              <button
+                class="button control-button"
+                id="play-button"
+                type="button"
+                title="Play trace"
+                aria-label="Play trace"
+              >
+                <i data-lucide="play" aria-hidden="true"></i>
+                <span>Play</span>
+              </button>
+              <label class="sr-only" for="timeline">Trace progress</label>
+              <input
+                class="timeline"
+                id="timeline"
+                type="range"
+                min="0"
+                max="1000"
+                value="0"
+                step="1"
+              >
+              <div class="timeline-readout" id="timeline-readout">0%</div>
+            </div>
+
+            <div class="comparison" id="comparison">
+              <article class="lane dsl" aria-labelledby="dsl-title">
+                <div class="lane-head">
+                  <div>
+                    <h2 class="lane-name" id="dsl-title">DSL-LLaDA</h2>
+                    <div class="lane-method">Continuous state / Heun SDE</div>
+                  </div>
+                  <div class="lane-score">
+                    <strong id="dsl-score">--</strong>
+                    <span id="dsl-score-label">metric</span>
+                  </div>
+                </div>
+                <div class="state-row">
+                  <span id="dsl-state">Noise state</span>
+                  <span id="dsl-stat">SNR 0.01</span>
+                </div>
+                <div class="frame-copy">
+                  <div class="frame-copy-label">Current decode</div>
+                  <p class="frame-copy-text" id="dsl-frame-text"></p>
+                </div>
+                <div class="token-canvas" id="dsl-tokens" aria-label="DSL-LLaDA token state"></div>
+              </article>
+
+              <article class="lane llada" aria-labelledby="llada-title">
+                <div class="lane-head">
+                  <div>
+                    <h2 class="lane-name" id="llada-title">LLaDA</h2>
+                    <div class="lane-method">Discrete low-confidence remasking</div>
+                  </div>
+                  <div class="lane-score">
+                    <strong id="llada-score">--</strong>
+                    <span id="llada-score-label">metric</span>
+                  </div>
+                </div>
+                <div class="state-row">
+                  <span id="llada-state">All positions masked</span>
+                  <span id="llada-stat">0 visible</span>
+                </div>
+                <div class="frame-copy">
+                  <div class="frame-copy-label">Current decode</div>
+                  <p class="frame-copy-text" id="llada-frame-text"></p>
+                </div>
+                <div
+                  class="token-canvas"
+                  id="llada-tokens"
+                  aria-label="LLaDA token state"
+                ></div>
+              </article>
+            </div>
+
+            <p class="trace-caption" id="trace-caption" aria-live="polite"></p>
+            <div class="load-error" id="load-error" hidden>
+              Trace data could not be loaded.
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer>
+      Frozen Beta1 trace replay. <a href="about.html">Read about the work</a>.
+    </footer>
+
+    <script>
+      const TRACE_URL = "demo/traces/showcase.json";
+      const MAX_VISIBLE_TOKENS = 64;
+      const PLAY_DURATION_MS = 6200;
+
+      const state = {
+        data: null,
+        caseIndex: 0,
+        progress: 0,
+        playing: false,
+        animationFrame: null,
+        animationStartedAt: 0,
+        animationStartProgress: 0,
+      };
+
+      const elements = {
+        tabs: document.getElementById("scenario-tabs"),
+        prompt: document.getElementById("prompt-text"),
+        protocolNfe: document.getElementById("protocol-nfe"),
+        protocolLength: document.getElementById("protocol-length"),
+        protocolSeed: document.getElementById("protocol-seed"),
+        playButton: document.getElementById("play-button"),
+        replayTop: document.getElementById("replay-top"),
+        timeline: document.getElementById("timeline"),
+        timelineReadout: document.getElementById("timeline-readout"),
+        dslTokens: document.getElementById("dsl-tokens"),
+        lladaTokens: document.getElementById("llada-tokens"),
+        dslState: document.getElementById("dsl-state"),
+        lladaState: document.getElementById("llada-state"),
+        dslStat: document.getElementById("dsl-stat"),
+        lladaStat: document.getElementById("llada-stat"),
+        dslFrameText: document.getElementById("dsl-frame-text"),
+        lladaFrameText: document.getElementById("llada-frame-text"),
+        dslScore: document.getElementById("dsl-score"),
+        lladaScore: document.getElementById("llada-score"),
+        dslScoreLabel: document.getElementById("dsl-score-label"),
+        lladaScoreLabel: document.getElementById("llada-score-label"),
+        caption: document.getElementById("trace-caption"),
+        comparison: document.getElementById("comparison"),
+        error: document.getElementById("load-error"),
+      };
+
+      function activeCase() {
+        return state.data.cases[state.caseIndex];
+      }
+
+      function scenarioName(item) {
+        if (item.task === "xsum") return "News summary";
+        if (item.task === "travel") return "Shanghai trip";
+        if (item.task === "aeslc") return "Email subject";
+        return item.title;
+      }
+
+      function cleanToken(raw) {
+        if (raw === "[MASK]") return "MASK";
+        if (raw === "[continuous]") return "\u00b7";
+        if (raw.includes("<|endoftext|>")) return "EOS";
+        const cleaned = raw
+          .replace(/^\u0120/, "")
+          .replace(/\u010a/g, "NL")
+          .replace(/\u2581/g, "");
+        return cleaned || "\u00b7";
+      }
+
+      function confidenceClass(value) {
+        if (value >= 0.7) return "conf-high";
+        if (value >= 0.3) return "conf-mid";
+        return "conf-low";
+      }
+
+      function renderTokens(container, frame) {
+        container.replaceChildren();
+        const changed = new Set(frame.changed_positions || frame.new_positions || []);
+        const tokenLimit = window.matchMedia("(max-width: 680px)").matches
+          ? 24
+          : 32;
+        const tokens = frame.tokens.slice(0, tokenLimit);
+        const confidence = frame.confidence || [];
+
+        tokens.forEach((raw, index) => {
+          const token = document.createElement("span");
+          token.className = `token ${confidenceClass(confidence[index] || 0)}`;
+          if (raw === "[MASK]") token.classList.add("mask");
+          if (raw === "[continuous]") token.classList.add("continuous");
+          if (changed.has(index)) token.classList.add("changed");
+          token.textContent = cleanToken(raw);
+          token.title = `position ${index}: ${raw}`;
+          container.appendChild(token);
+        });
+
+        if (frame.tokens.length > tokenLimit) {
+          const more = document.createElement("span");
+          more.className = "token-more";
+          more.textContent = `+${frame.tokens.length - tokenLimit}`;
+          container.appendChild(more);
+        }
+      }
+
+      function frameAt(trace, progress) {
+        const index = Math.min(
+          trace.length - 1,
+          Math.round(progress * (trace.length - 1)),
+        );
+        return { frame: trace[index], index };
+      }
+
+      function renderLane(method, progress) {
+        const item = activeCase();
+        const trace = item[method].trace;
+        const { frame, index } = frameAt(trace, progress);
+        const isDsl = method === "dsl";
+        const tokenRoot = isDsl ? elements.dslTokens : elements.lladaTokens;
+        const stateRoot = isDsl ? elements.dslState : elements.lladaState;
+        const statRoot = isDsl ? elements.dslStat : elements.lladaStat;
+        const frameTextRoot = isDsl
+          ? elements.dslFrameText
+          : elements.lladaFrameText;
+
+        renderTokens(tokenRoot, frame);
+
+        if (isDsl) {
+          if (frame.stage === "noise") {
+            stateRoot.textContent = "Continuous noise";
+          } else if (frame.stage === "decode") {
+            stateRoot.textContent = "Final decode";
+          } else {
+            stateRoot.textContent = `Heun state ${frame.step}/${trace.length - 2}`;
+          }
+          const changed = (frame.changed_positions || []).length;
+          const snr = Number(frame.snr || 0);
+          statRoot.textContent = `SNR ${snr.toFixed(snr < 1 ? 2 : 1)} / ${changed} changed`;
+          frameTextRoot.textContent =
+            frame.text.trim() ||
+            "All response positions remain continuous; no hard tokens are committed yet.";
+        } else {
+          if (frame.stage === "mask") {
+            stateRoot.textContent = "All positions masked";
+          } else if (frame.stage === "decode") {
+            stateRoot.textContent = "Final reveal";
+          } else {
+            stateRoot.textContent = `Reveal ${frame.step}/${trace.length - 1}`;
+          }
+          const visible = Number(frame.visible_count || 0);
+          statRoot.textContent = `${visible}/${frame.tokens.length} visible`;
+          frameTextRoot.textContent =
+            frame.text.trim() || "All response positions are still masked.";
+        }
+
+        return index;
+      }
+
+      function metricFor(item, method) {
+        if (typeof item.scores.dsl_rouge_l === "number") {
+          return {
+            value:
+              method === "dsl"
+                ? item.scores.dsl_rouge_l.toFixed(2)
+                : item.scores.llada_rouge_l.toFixed(2),
+            label: "ROUGE-L",
+          };
+        }
+
+        const features = item.plan_evaluation[method];
+        return {
+          value: `${features.day_sections} / 3`,
+          label: "day sections",
+        };
+      }
+
+      function captionFor(item) {
+        if (item.task === "xsum") {
+          return "<strong>Observed case.</strong> DSL-LLaDA avoids the repetition collapse in the matched-NFE LLaDA output. This is a selected example, not an aggregate score.";
+        }
+        if (item.task === "travel") {
+          return "<strong>Qualitative trajectory.</strong> Both methods produce three day sections at NFE 32. This case illustrates continuous revision versus discrete reveal; no benchmark win is claimed.";
+        }
+        return "<strong>Observed case.</strong> DSL-LLaDA produces a recognizable mailbox warning subject while the matched-NFE LLaDA output repeats subwords.";
+      }
+
+      function renderProgress(progress) {
+        if (!state.data) return;
+        state.progress = Math.max(0, Math.min(1, progress));
+        elements.timeline.value = String(Math.round(state.progress * 1000));
+        elements.timelineReadout.textContent = `${Math.round(state.progress * 100)}%`;
+        renderLane("dsl", state.progress);
+        renderLane("llada", state.progress);
+      }
+
+      function renderCase() {
+        const item = activeCase();
+        const protocol = state.data.metadata.protocols[item.key];
+        elements.prompt.replaceChildren();
+        const promptParts = item.prompt.split(/\n\s*\n/);
+        const instruction = document.createElement("span");
+        instruction.className = "prompt-instruction";
+        instruction.textContent = promptParts[0];
+        elements.prompt.appendChild(instruction);
+        if (promptParts.length > 1) {
+          const source = document.createElement("span");
+          source.className = "prompt-source";
+          source.textContent = promptParts.slice(1).join(" ");
+          elements.prompt.appendChild(source);
+        }
+        elements.protocolNfe.textContent = `NFE ${protocol.nfe}`;
+        elements.protocolLength.textContent = `${protocol.generation_tokens} tokens`;
+        elements.protocolSeed.textContent = `DSL seed ${protocol.dsl_seed}`;
+        const dslMetric = metricFor(item, "dsl");
+        const lladaMetric = metricFor(item, "llada");
+        elements.dslScore.textContent = dslMetric.value;
+        elements.lladaScore.textContent = lladaMetric.value;
+        elements.dslScoreLabel.textContent = dslMetric.label;
+        elements.lladaScoreLabel.textContent = lladaMetric.label;
+        elements.caption.innerHTML = captionFor(item);
+
+        Array.from(elements.tabs.children).forEach((tab, index) => {
+          const selected = index === state.caseIndex;
+          tab.setAttribute("aria-selected", String(selected));
+          tab.tabIndex = selected ? 0 : -1;
+        });
+
+        stopPlayback();
+        renderProgress(0);
+      }
+
+      function buildTabs() {
+        elements.tabs.replaceChildren();
+        state.data.cases.forEach((item, index) => {
+          const button = document.createElement("button");
+          button.className = "scenario-tab";
+          button.type = "button";
+          button.role = "tab";
+          button.textContent = scenarioName(item);
+          button.setAttribute("aria-controls", "comparison");
+          button.addEventListener("click", () => {
+            state.caseIndex = index;
+            renderCase();
+            if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+              startPlayback();
+            }
+          });
+          elements.tabs.appendChild(button);
+        });
+      }
+
+      function setPlayButton(playing) {
+        state.playing = playing;
+        elements.playButton.replaceChildren();
+        const icon = document.createElement("i");
+        icon.setAttribute("data-lucide", playing ? "pause" : "play");
+        icon.setAttribute("aria-hidden", "true");
+        const label = document.createElement("span");
+        label.textContent = playing ? "Pause" : "Play";
+        elements.playButton.append(icon, label);
+        elements.playButton.title = playing ? "Pause trace" : "Play trace";
+        elements.playButton.setAttribute(
+          "aria-label",
+          playing ? "Pause trace" : "Play trace",
+        );
+        if (window.lucide) window.lucide.createIcons();
+      }
+
+      function stopPlayback() {
+        if (state.animationFrame) {
+          cancelAnimationFrame(state.animationFrame);
+          state.animationFrame = null;
+        }
+        setPlayButton(false);
+      }
+
+      function animationTick(timestamp) {
+        if (!state.playing) return;
+        const elapsed = timestamp - state.animationStartedAt;
+        const remaining = 1 - state.animationStartProgress;
+        const progress =
+          state.animationStartProgress + (elapsed / PLAY_DURATION_MS) * remaining;
+        renderProgress(progress);
+        if (progress >= 1) {
+          stopPlayback();
+          return;
+        }
+        state.animationFrame = requestAnimationFrame(animationTick);
+      }
+
+      function startPlayback() {
+        if (!state.data) return;
+        if (state.progress >= 0.999) renderProgress(0);
+        state.animationStartProgress = state.progress;
+        state.animationStartedAt = performance.now();
+        setPlayButton(true);
+        state.animationFrame = requestAnimationFrame(animationTick);
+      }
+
+      elements.playButton.addEventListener("click", () => {
+        if (state.playing) {
+          stopPlayback();
+        } else {
+          startPlayback();
+        }
+      });
+
+      elements.replayTop.addEventListener("click", () => {
+        stopPlayback();
+        renderProgress(0);
+        startPlayback();
+        document.getElementById("trace").scrollIntoView({ behavior: "smooth" });
+      });
+
+      elements.timeline.addEventListener("input", (event) => {
+        stopPlayback();
+        renderProgress(Number(event.target.value) / 1000);
+      });
+
+      async function initialize() {
+        try {
+          const response = await fetch(TRACE_URL, { cache: "no-store" });
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          state.data = await response.json();
+          buildTabs();
+          renderCase();
+          if (window.lucide) window.lucide.createIcons();
+          if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+            window.setTimeout(startPlayback, 450);
+          }
+        } catch (error) {
+          elements.error.hidden = false;
+          elements.error.textContent = `Trace data could not be loaded: ${error.message}`;
+          elements.comparison.hidden = true;
+          elements.playButton.disabled = true;
+          console.error(error);
+        }
+      }
+
+      window.addEventListener("DOMContentLoaded", initialize);
+    </script>
+  </body>
+</html>
