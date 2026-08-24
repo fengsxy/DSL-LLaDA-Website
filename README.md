@@ -5,6 +5,10 @@ Paper website and frozen generation-trace replay for
 
 Live site: <https://fengsxy.github.io/DSL-LLaDA-Website/>
 
+Paper: <https://arxiv.org/abs/2606.01024>
+
+Accepted to Findings of EMNLP 2026.
+
 The published demo compares DSL-LLaDA with LLaDA using matched generation
 protocols on:
 
@@ -27,6 +31,7 @@ Then open <http://localhost:7860>.
 
 ## Published Scope
 
-The repository includes the two static pages, the selected trace artifact, and
-a Python standard-library replay server. Checkpoints, candidate pools, logs,
-and online inference dependencies are intentionally excluded.
+The repository includes the two static pages, paper figures used by the project
+page, the selected trace artifact, and a Python standard-library replay server.
+Checkpoints, candidate pools, logs, and online inference dependencies are
+intentionally excluded.

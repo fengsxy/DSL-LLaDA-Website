@@ -13,19 +13,55 @@ class WebsiteTests(unittest.TestCase):
         self.assertIn('<h1 id="page-title">DSL-LLaDA</h1>', html)
         self.assertIn('const TRACE_URL = "demo/traces/showcase.json"', html)
         self.assertIn('href="about.html"', html)
+        self.assertIn("Findings of EMNLP 2026", html)
+        self.assertIn('class="paper-cta"', html)
+        self.assertIn("<span>Paper details</span>", html)
         self.assertNotIn('href="/about.html"', html)
         self.assertNotIn('href="/generate"', html)
         self.assertNotIn("Final output", html)
 
-    def test_about_page_is_separate_and_uses_relative_links(self):
+    def test_paper_page_contains_verified_publication_details(self):
         demo_html = (ROOT / "index.html").read_text(encoding="utf-8")
         about_html = (ROOT / "about.html").read_text(encoding="utf-8")
 
         self.assertNotIn("Delay the hard decision.", demo_html)
         self.assertIn("Delay the hard decision.", about_html)
-        self.assertIn("What the replay supports.", about_html)
+        self.assertIn("Accepted to <strong>Findings of EMNLP 2026</strong>", about_html)
+        self.assertIn("https://arxiv.org/abs/2606.01024", about_html)
+        self.assertIn("assets/figure1final.png", about_html)
+        self.assertIn("assets/nfe_efficiency_curve.png", about_html)
+        self.assertIn("Copy BibTeX", about_html)
+        self.assertIn(
+            "Qualitative trajectory case only; no aggregate performance claim.",
+            about_html,
+        )
+
+        for author in (
+            "Longxuan Yu",
+            "Yunshu Wu",
+            "Yu Fu",
+            "Siheng Xiong",
+            "Rob Brekelmans",
+            "Hui Liu",
+            "Yue Dong",
+            "Greg Ver Steeg",
+        ):
+            self.assertIn(author, about_html)
+
         self.assertIn('href="index.html"', about_html)
         self.assertNotIn('href="/"', about_html)
+        self.assertNotIn("/Users/", about_html)
+
+    def test_paper_assets_are_published_and_served_locally(self):
+        replay_server = (ROOT / "demo" / "replay_server.py").read_text(
+            encoding="utf-8"
+        )
+
+        for asset in ("figure1final.png", "nfe_efficiency_curve.png"):
+            asset_path = ROOT / "assets" / asset
+            self.assertTrue(asset_path.is_file())
+            self.assertGreater(asset_path.stat().st_size, 10_000)
+            self.assertIn(f'"/assets/{asset}"', replay_server)
 
     def test_showcase_contains_matched_real_traces(self):
         showcase = json.loads(

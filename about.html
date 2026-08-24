@@ -5,9 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta
       name="description"
-      content="DSL-LLaDA adapts LLaDA-8B-Instruct for continuous denoising with Discrete Stochastic Localization."
+      content="DSL-LLaDA adapts LLaDA-8B-Instruct for continuous denoising with only 1,000 training steps. Accepted to Findings of EMNLP 2026."
     >
-    <title>About DSL-LLaDA</title>
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="DSL-LLaDA | Findings of EMNLP 2026">
+    <meta
+      property="og:description"
+      content="Scaling continuous denoising to an 8B masked diffusion language model."
+    >
+    <meta
+      property="og:image"
+      content="https://fengsxy.github.io/DSL-LLaDA-Website/assets/figure1final.png"
+    >
+    <link
+      rel="canonical"
+      href="https://fengsxy.github.io/DSL-LLaDA-Website/about.html"
+    >
+    <title>DSL-LLaDA | Findings of EMNLP 2026</title>
     <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <style>
       :root {
@@ -26,6 +40,10 @@
       * {
         box-sizing: border-box;
         letter-spacing: 0;
+      }
+
+      html {
+        scroll-behavior: smooth;
       }
 
       body {
@@ -112,11 +130,27 @@
         text-transform: uppercase;
       }
 
+      .venue {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin-bottom: 22px;
+        color: var(--green-deep);
+        font-size: 14px;
+        font-weight: 750;
+      }
+
+      .venue svg {
+        width: 20px;
+        height: 20px;
+        stroke-width: 2.4;
+      }
+
       h1 {
         max-width: 980px;
         margin: 0;
-        font-size: 68px;
-        line-height: 1;
+        font-size: 58px;
+        line-height: 1.04;
       }
 
       .lead {
@@ -124,6 +158,31 @@
         margin: 22px 0 0;
         color: #3f4942;
         font-size: 21px;
+      }
+
+      .authors {
+        max-width: 1040px;
+        margin: 26px 0 0;
+        color: #252b27;
+        font-size: 17px;
+        font-weight: 760;
+        line-height: 1.8;
+      }
+
+      .authors span {
+        white-space: nowrap;
+      }
+
+      .authors sup {
+        color: var(--green-deep);
+        font-size: 10px;
+      }
+
+      .affiliations,
+      .author-note {
+        margin: 7px 0 0;
+        color: var(--muted);
+        font-size: 13px;
       }
 
       .actions {
@@ -154,14 +213,16 @@
       }
 
       .button svg,
-      .resource svg {
+      .resource svg,
+      .copy-button svg,
+      .scope-note svg {
         width: 17px;
         height: 17px;
       }
 
       .facts {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 28px;
         margin-top: 58px;
       }
@@ -177,6 +238,10 @@
 
       .fact:nth-child(3) {
         border-color: var(--blue);
+      }
+
+      .fact:nth-child(4) {
+        border-color: #c3811d;
       }
 
       .fact strong {
@@ -211,9 +276,45 @@
         font-size: 18px;
       }
 
+      .prose {
+        max-width: 900px;
+        margin-left: auto;
+        color: #303832;
+        font-size: 17px;
+      }
+
+      .prose p {
+        margin: 0;
+      }
+
+      .prose p + p {
+        margin-top: 18px;
+      }
+
+      .paper-figure {
+        margin: 46px 0 0;
+        padding: 30px 0 0;
+        border-top: 1px solid var(--line);
+      }
+
+      .paper-figure img {
+        width: 100%;
+        height: auto;
+        display: block;
+        background: var(--white);
+      }
+
+      .paper-figure figcaption {
+        max-width: 960px;
+        margin-top: 18px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
       .process {
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
+        margin-top: 40px;
         border-top: 1px solid var(--line);
         border-bottom: 1px solid var(--line);
       }
@@ -276,9 +377,30 @@
         font-weight: 850;
       }
 
+      .scope-note {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 13px;
+        align-items: start;
+        margin-top: 38px;
+        padding-top: 18px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .scope-note svg {
+        margin-top: 2px;
+        color: var(--blue);
+      }
+
+      .scope-note strong {
+        color: var(--ink);
+      }
+
       .resource-list {
         display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+        grid-template-columns: repeat(5, minmax(0, 1fr));
         border: 1px solid var(--line);
         border-radius: var(--radius);
         overflow: hidden;
@@ -314,6 +436,56 @@
         font-size: 15px;
       }
 
+      .citation {
+        margin-top: 54px;
+      }
+
+      .citation-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 14px;
+      }
+
+      .citation-head h3 {
+        margin: 0;
+        font-size: 20px;
+      }
+
+      .copy-button {
+        min-height: 36px;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 0 12px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--white);
+        color: var(--ink);
+        cursor: pointer;
+        font: inherit;
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .copy-button:hover,
+      .copy-button:focus-visible {
+        border-color: var(--green-deep);
+      }
+
+      pre {
+        margin: 0;
+        padding: 20px;
+        overflow-x: auto;
+        border-radius: var(--radius);
+        background: #171c19;
+        color: #f4f7f5;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 12px;
+        line-height: 1.65;
+      }
+
       footer {
         padding: 28px 24px 38px;
         color: var(--muted);
@@ -322,26 +494,63 @@
       }
 
       @media (max-width: 760px) {
+        html,
+        body {
+          max-width: 100%;
+          overflow-x: hidden;
+        }
+
         .topbar {
           position: static;
           padding: 0 16px;
         }
 
-        .nav a:not(:first-child) {
+        .nav {
           display: none;
         }
 
         .inner {
-          width: min(100% - 30px, 1180px);
+          width: calc(100% - 30px);
+          max-width: 100%;
+          margin: 0 15px;
           padding: 52px 0;
         }
 
         h1 {
-          font-size: 46px;
+          max-width: 100%;
+          overflow-wrap: anywhere;
+          font-size: 38px;
+          line-height: 1.06;
         }
 
         .lead {
+          max-width: 100%;
           font-size: 17px;
+        }
+
+        .kicker,
+        .authors,
+        .affiliations,
+        .author-note,
+        .venue {
+          max-width: 100%;
+          overflow-wrap: anywhere;
+        }
+
+        .authors span {
+          white-space: normal;
+        }
+
+        .actions {
+          width: 100%;
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .button {
+          width: 100%;
+          min-width: 0;
+          padding: 0 9px;
         }
 
         .facts,
@@ -375,6 +584,27 @@
         .step-index {
           margin-bottom: 18px;
         }
+
+        .authors {
+          font-size: 15px;
+        }
+
+        .venue {
+          align-items: flex-start;
+        }
+
+        .paper-figure {
+          margin-top: 34px;
+          padding-top: 22px;
+        }
+
+        .citation-head {
+          align-items: flex-start;
+        }
+
+        pre {
+          max-width: 100%;
+        }
       }
     </style>
   </head>
@@ -383,6 +613,7 @@
       <a class="brand" href="index.html">DSL-LLaDA <small>Beta1</small></a>
       <nav class="nav" aria-label="Primary navigation">
         <a href="index.html">Demo</a>
+        <a href="#results">Results</a>
         <a href="https://huggingface.co/liddlefish/DSL-LLaDA-Beta1">Model</a>
         <a href="https://github.com/fengsxy/DSL-LLaDA">Code</a>
       </nav>
@@ -391,17 +622,47 @@
     <main>
       <section class="hero">
         <div class="inner">
+          <div class="venue">
+            <i data-lucide="circle-check-big" aria-hidden="true"></i>
+            <span>Accepted to <strong>Findings of EMNLP 2026</strong></span>
+          </div>
           <p class="kicker">Continuous denoising for masked diffusion language models</p>
           <h1>DSL-LLaDA: Scaling Continuous Denoising to 8B Masked Diffusion LMs</h1>
+          <p class="authors">
+            <span>Longxuan Yu<sup>*</sup></span> &middot;
+            <span>Yunshu Wu<sup>*</sup></span> &middot;
+            <span>Yu Fu</span> &middot;
+            <span>Siheng Xiong</span> &middot;
+            <span>Rob Brekelmans</span> &middot;
+            <span>Hui Liu</span> &middot;
+            <span>Yue Dong</span> &middot;
+            <span>Greg Ver Steeg<sup>&dagger;</sup></span>
+          </p>
+          <p class="affiliations">
+            University of California, Riverside &middot; Georgia Institute of
+            Technology &middot; Microsoft
+          </p>
+          <p class="author-note">
+            * Equal contribution &middot; &dagger; Corresponding author
+          </p>
           <p class="lead">
-            DSL-LLaDA lightly adapts LLaDA-8B-Instruct with Discrete Stochastic
-            Localization, allowing response positions to evolve in continuous
-            embedding space before the model commits to final tokens.
+            A 1,000-step adaptation turns LLaDA-8B-Instruct into a continuous
+            denoiser that keeps every response position editable until the final
+            decode.
           </p>
           <div class="actions">
-            <a class="button primary" href="index.html">
+            <a
+              class="button primary"
+              href="https://arxiv.org/abs/2606.01024"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <i data-lucide="file-text" aria-hidden="true"></i>
+              <span>Paper</span>
+            </a>
+            <a class="button" href="index.html">
               <i data-lucide="play" aria-hidden="true"></i>
-              <span>Open replay</span>
+              <span>Trace replay</span>
             </a>
             <a class="button" href="https://huggingface.co/liddlefish/DSL-LLaDA-Beta1">
               <i data-lucide="download" aria-hidden="true"></i>
@@ -414,72 +675,186 @@
           </div>
           <div class="facts">
             <div class="fact"><strong>8B</strong><span>LLaDA-Instruct backbone</span></div>
-            <div class="fact"><strong>1K</strong><span>DSL adaptation steps</span></div>
-            <div class="fact"><strong>Heun SDE</strong><span>Continuous joint refinement</span></div>
+            <div class="fact"><strong>1,000</strong><span>DSL adaptation steps</span></div>
+            <div class="fact"><strong>&le;16</strong><span>Low-NFE evaluation focus</span></div>
+            <div class="fact"><strong>4 / 4</strong><span>Best ROUGE-1 at low NFE</span></div>
           </div>
         </div>
       </section>
 
-      <section class="band">
+      <section class="band" id="abstract">
+        <div class="inner">
+          <div class="section-head">
+            <h2>Abstract.</h2>
+            <p>
+              Few-step masked diffusion decoding tends to choose between short
+              outputs and long, repetitive ones. DSL-LLaDA targets that failure
+              mode without training a continuous language model from scratch.
+            </p>
+          </div>
+          <div class="prose">
+            <p>
+              We lightly adapt LLaDA-8B-Instruct with Discrete Stochastic
+              Localization (DSL), replacing binary masking with continuous
+              per-token Gaussian noise as a soft mask. The adapted model evolves
+              all response positions jointly in embedding space and defers hard
+              token commitment to the final step.
+            </p>
+            <p>
+              On zero-shot summarization at 16 or fewer forward passes,
+              DSL-LLaDA-SDE achieves the best ROUGE-1 on all four benchmarks and
+              largely avoids the premature-termination and repetition tradeoff of
+              iterative unmasking. The same adaptation also produces selective
+              noisy-state robustness: corrupted tokens can be corrected while
+              clean tokens remain unchanged.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="band alt" id="method">
         <div class="inner">
           <div class="section-head">
             <h2>Delay the hard decision.</h2>
             <p>
-              Standard LLaDA sampling repeatedly reveals discrete tokens. DSL-LLaDA
-              keeps every response position continuous, revises the full state jointly,
-              and performs a hard decode only after denoising.
+              Standard LLaDA sees clean tokens or a hard mask. DSL-LLaDA replaces
+              that binary input with graded per-token uncertainty and maps the
+              resulting soft state back into the pretrained backbone.
             </p>
           </div>
+          <figure class="paper-figure">
+            <img
+              src="assets/figure1final.png"
+              width="1832"
+              height="859"
+              alt="Comparison between original LLaDA discrete masked diffusion and DSL-LLaDA continuous per-token noise training"
+            >
+            <figcaption>
+              DSL-LLaDA introduces continuous per-token noise at varying SNR. A
+              softmax converter maps noisy states into the LLaDA input space,
+              moving from mask-like uncertainty to token-like evidence without
+              changing the 8B backbone architecture.
+            </figcaption>
+          </figure>
           <div class="process">
             <article class="step">
               <span class="step-index">01</span>
-              <h3>Initialize</h3>
-              <p>Sample one continuous noisy state for every response position.</p>
+              <h3>Adapt</h3>
+              <p>Expose the pretrained backbone to continuous noisy token states.</p>
             </article>
             <article class="step">
               <span class="step-index">02</span>
               <h3>Convert</h3>
-              <p>Map soft states into the pretrained LLaDA embedding space.</p>
+              <p>Map each soft state into a mixture of backbone token embeddings.</p>
             </article>
             <article class="step">
               <span class="step-index">03</span>
               <h3>Refine</h3>
-              <p>Apply Heun updates while all response positions remain editable.</p>
+              <p>Use Heun updates while all response positions remain editable.</p>
             </article>
             <article class="step">
               <span class="step-index">04</span>
               <h3>Decode</h3>
-              <p>Commit to discrete text after the continuous trajectory settles.</p>
+              <p>Commit to hard tokens only after continuous denoising finishes.</p>
             </article>
           </div>
         </div>
       </section>
 
-      <section class="band alt">
+      <section class="band" id="results">
         <div class="inner">
           <div class="section-head">
-            <h2>What the replay supports.</h2>
+            <h2>Few steps, fewer failure modes.</h2>
             <p>
-              The released traces separate measured examples from qualitative behavior.
-              Outputs come directly from the Beta1 checkpoint and are not hand-edited.
+              We evaluate fluency, repetition, and output length together so
+              neither early termination nor fluent repetition can masquerade as
+              generation quality.
+            </p>
+          </div>
+          <figure class="paper-figure">
+            <img
+              src="assets/nfe_efficiency_curve.png"
+              width="1600"
+              height="1151"
+              alt="Generation fluency, repetition rate, and output length across NFE budgets for DSL-LLaDA and discrete baselines"
+            >
+            <figcaption>
+              Open-ended generation on 200 prompts with 256-token outputs.
+              DSL-LLaDA-SDE maintains low repetition and full-length generations
+              across NFE budgets, while discrete variants either terminate early
+              or repeat heavily at low NFE.
+            </figcaption>
+          </figure>
+          <div class="evidence-grid">
+            <article class="evidence">
+              <span class="value">4 / 4</span>
+              <h3>Low-NFE summarization</h3>
+              <p>
+                Best ROUGE-1 on XSum, CNN/DailyMail, PubMed, and arXiv at NFE 8
+                and 16.
+              </p>
+            </article>
+            <article class="evidence">
+              <span class="value">&lt;9%</span>
+              <h3>Open-ended repetition</h3>
+              <p>
+                Repetition stays below 9% across the tested NFE budgets from 8
+                through 128.
+              </p>
+            </article>
+            <article class="evidence">
+              <span class="value">&gt;98%</span>
+              <h3>Clean tokens preserved</h3>
+              <p>
+                Clean-token preservation remains above 98% at 10%, 30%, and 50%
+                random corruption.
+              </p>
+            </article>
+          </div>
+          <div class="scope-note">
+            <i data-lucide="scale" aria-hidden="true"></i>
+            <div>
+              <strong>Scope.</strong> The strongest result is low-NFE,
+              source-anchored generation. On long-reference tasks at high NFE,
+              vanilla LLaDA can match or exceed SDE; open-ended creative prompts
+              also remain more challenging than summarization.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="band alt" id="replay">
+        <div class="inner">
+          <div class="section-head">
+            <h2>Watch the decode evolve.</h2>
+            <p>
+              The demo replays frozen outputs and intermediate states from the
+              public Beta1 checkpoint. Every pair uses the same prompt, response
+              length, and NFE budget.
             </p>
           </div>
           <div class="evidence-grid">
             <article class="evidence">
               <span class="value">10.81 vs 4.38</span>
               <h3>XSum at NFE 8</h3>
-              <p>The selected DSL-LLaDA case remains concise while LLaDA repeats.</p>
+              <p>ROUGE-L for one selected trace where LLaDA enters repetition.</p>
             </article>
             <article class="evidence">
               <span class="value">3 / 3 days</span>
               <h3>Shanghai planning at NFE 32</h3>
-              <p>Both methods complete the structure; this is a trajectory case.</p>
+              <p>Qualitative trajectory case only; no aggregate performance claim.</p>
             </article>
             <article class="evidence">
-              <span class="value">Same prompt + NFE</span>
-              <h3>Matched controls</h3>
-              <p>Prompt, output length, and network-evaluation budget are fixed.</p>
+              <span class="value">NFE 8</span>
+              <h3>Email subject generation</h3>
+              <p>A compact AESLC example showing the two reveal trajectories.</p>
             </article>
+          </div>
+          <div class="actions">
+            <a class="button primary" href="index.html">
+              <i data-lucide="play" aria-hidden="true"></i>
+              <span>Open trace replay</span>
+            </a>
           </div>
         </div>
       </section>
@@ -487,10 +862,17 @@
       <section class="band">
         <div class="inner">
           <div class="section-head">
-            <h2>Public release.</h2>
-            <p>Use the frozen replay, checkpoint, source code, or raw trace artifact.</p>
+            <h2>Public artifacts.</h2>
+            <p>
+              Read the paper, inspect the replay, download Beta1, or reproduce
+              the method from the released implementation.
+            </p>
           </div>
           <div class="resource-list">
+            <a class="resource" href="https://arxiv.org/abs/2606.01024">
+              <i data-lucide="file-text" aria-hidden="true"></i>
+              <div><span>Manuscript</span><strong>arXiv paper</strong></div>
+            </a>
             <a class="resource" href="index.html">
               <i data-lucide="play" aria-hidden="true"></i>
               <div><span>Interactive</span><strong>Trace replay</strong></div>
@@ -508,14 +890,63 @@
               <div><span>Provenance</span><strong>Raw trace JSON</strong></div>
             </a>
           </div>
+          <div class="citation">
+            <div class="citation-head">
+              <h3>Citation</h3>
+              <button
+                class="copy-button"
+                id="copy-citation"
+                type="button"
+                title="Copy BibTeX citation"
+                aria-label="Copy BibTeX citation"
+              >
+                <i data-lucide="copy" aria-hidden="true"></i>
+                <span id="copy-label">Copy BibTeX</span>
+              </button>
+            </div>
+            <pre><code id="citation-text">@inproceedings{yu2026dsllada,
+  title     = {DSL-LLaDA: Scaling Continuous Denoising to 8B Masked Diffusion LMs},
+  author    = {Yu, Longxuan and Wu, Yunshu and Fu, Yu and Xiong, Siheng and Brekelmans, Rob and Liu, Hui and Dong, Yue and Ver Steeg, Greg},
+  booktitle = {Findings of the Association for Computational Linguistics: EMNLP 2026},
+  year      = {2026},
+  url       = {https://arxiv.org/abs/2606.01024}
+}</code></pre>
+          </div>
         </div>
       </section>
     </main>
 
-    <footer>DSL-LLaDA reproducibility release.</footer>
+    <footer>
+      DSL-LLaDA &middot; Accepted to Findings of EMNLP 2026
+    </footer>
     <script>
       window.addEventListener("DOMContentLoaded", () => {
         if (window.lucide) window.lucide.createIcons();
+
+        const copyButton = document.getElementById("copy-citation");
+        const copyLabel = document.getElementById("copy-label");
+        const citation = document.getElementById("citation-text");
+
+        copyButton.addEventListener("click", async () => {
+          const text = citation.textContent;
+          try {
+            await navigator.clipboard.writeText(text);
+          } catch (error) {
+            const textarea = document.createElement("textarea");
+            textarea.value = text;
+            textarea.style.position = "fixed";
+            textarea.style.opacity = "0";
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand("copy");
+            textarea.remove();
+          }
+
+          copyLabel.textContent = "Copied";
+          window.setTimeout(() => {
+            copyLabel.textContent = "Copy BibTeX";
+          }, 1600);
+        });
       });
     </script>
   </body>

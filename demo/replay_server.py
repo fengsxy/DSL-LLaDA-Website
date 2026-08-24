@@ -14,6 +14,14 @@ ROUTES = {
     "/": (ROOT_DIR / "index.html", "text/html; charset=utf-8"),
     "/index.html": (ROOT_DIR / "index.html", "text/html; charset=utf-8"),
     "/about.html": (ROOT_DIR / "about.html", "text/html; charset=utf-8"),
+    "/assets/figure1final.png": (
+        ROOT_DIR / "assets" / "figure1final.png",
+        "image/png",
+    ),
+    "/assets/nfe_efficiency_curve.png": (
+        ROOT_DIR / "assets" / "nfe_efficiency_curve.png",
+        "image/png",
+    ),
     "/demo/traces/showcase.json": (
         ROOT_DIR / "demo" / "traces" / "showcase.json",
         "application/json; charset=utf-8",

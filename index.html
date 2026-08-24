@@ -5,7 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta
       name="description"
-      content="DSL-LLaDA adapts LLaDA-8B-Instruct for continuous denoising. Explore real matched-NFE generation traces from the public Beta1 checkpoint."
+      content="Replay matched-NFE DSL-LLaDA and LLaDA generation traces. DSL-LLaDA was accepted to Findings of EMNLP 2026."
+    >
+    <link
+      rel="canonical"
+      href="https://fengsxy.github.io/DSL-LLaDA-Website/"
     >
     <title>DSL-LLaDA | Continuous Denoising for Masked Diffusion LMs</title>
     <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
@@ -800,6 +804,35 @@
         line-height: 1.6;
       }
 
+      .paper-cta {
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        background: #edf7f2;
+      }
+
+      .paper-cta-inner {
+        width: min(100% - 40px, 1120px);
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 40px;
+        align-items: center;
+        margin: 0 auto;
+        padding: 42px 0;
+      }
+
+      .paper-cta h2 {
+        margin: 0;
+        font-size: 30px;
+        line-height: 1.1;
+      }
+
+      .paper-cta p {
+        max-width: 720px;
+        margin: 9px 0 0;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
       footer {
         padding: 26px 24px 38px;
         background: var(--paper);
@@ -1019,6 +1052,17 @@
         .evidence-grid {
           gap: 24px;
         }
+
+        .paper-cta-inner {
+          grid-template-columns: 1fr;
+          gap: 20px;
+          width: min(100% - 28px, 1120px);
+          padding: 34px 0;
+        }
+
+        .paper-cta h2 {
+          font-size: 26px;
+        }
       }
 
       @media (prefers-reduced-motion: reduce) {
@@ -1036,7 +1080,7 @@
     <header class="topbar">
       <a class="brand" href="index.html">DSL-LLaDA <small>Beta1</small></a>
       <nav class="nav" aria-label="Primary navigation">
-        <a href="about.html">About</a>
+        <a href="about.html">Paper</a>
         <a href="https://huggingface.co/liddlefish/DSL-LLaDA-Beta1">Model</a>
         <a class="nav-code" href="https://github.com/fengsxy/DSL-LLaDA">Code</a>
       </nav>
@@ -1047,7 +1091,7 @@
         <div class="hero-inner">
           <div class="hero-heading">
             <div class="hero-copy">
-              <p class="kicker">Continuous denoising for masked diffusion language models</p>
+              <p class="kicker">Findings of EMNLP 2026 &middot; Continuous denoising for masked diffusion LMs</p>
               <h1 id="page-title">DSL-LLaDA</h1>
               <p class="subtitle">
                 Scaling continuous denoising to an 8B masked diffusion LM with a short
@@ -1167,10 +1211,30 @@
         </div>
       </section>
 
+      <section
+        class="paper-cta"
+        id="paper-details"
+        aria-labelledby="paper-cta-title"
+      >
+        <div class="paper-cta-inner">
+          <div>
+            <h2 id="paper-cta-title">Read the paper behind the replay.</h2>
+            <p>
+              See the method, low-NFE results, selective correction analysis,
+              authors, and public artifacts from the Findings of EMNLP 2026 paper.
+            </p>
+          </div>
+          <a class="button primary" href="about.html">
+            <span>Paper details</span>
+            <i data-lucide="arrow-right" aria-hidden="true"></i>
+          </a>
+        </div>
+      </section>
+
     </main>
 
     <footer>
-      Frozen Beta1 trace replay. <a href="about.html">Read about the work</a>.
+      Frozen Beta1 trace replay. <a href="about.html">Read the paper overview</a>.
     </footer>
 
     <script>
@@ -1492,6 +1556,11 @@
           state.data = await response.json();
           buildTabs();
           renderCase();
+          if (location.hash === "#paper-details") {
+            window.requestAnimationFrame(() => {
+              document.getElementById("paper-details").scrollIntoView();
+            });
+          }
           if (window.lucide) window.lucide.createIcons();
           if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
             window.setTimeout(startPlayback, 450);
