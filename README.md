@@ -3,6 +3,8 @@
 Paper website and frozen generation-trace replay for
 [DSL-LLaDA](https://github.com/fengsxy/DSL-LLaDA).
 
+Live site: <https://fengsxy.github.io/DSL-LLaDA-Website/>
+
 The published demo compares DSL-LLaDA with LLaDA using matched generation
 protocols on:
 
