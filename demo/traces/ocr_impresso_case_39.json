@@ -1,0 +1,118 @@
+{
+  "provenance": {
+    "dataset_repository": "https://github.com/hipe-eval/HIPE-OCRepair-2026-data",
+    "dataset_commit": "1bfecaf96caa01f7b80736101baad9f691904e77",
+    "dataset_file": "data/v0.9/impresso-snippets/en/hipe-ocrepair-bench_v0.9_impresso-snippets_v1.0_test_en.jsonl",
+    "dataset_file_sha256": "d40cba57bb9ec29dfeeec20a61af37f544af85c149a048d4ede6c6375db99744",
+    "jsonl_line": 40,
+    "probe_output_sha256": "1d5b8723bb2ee697ccd1cb20848c7cc7bb5ee2e983a324286cfd6f9974e6c630",
+    "probe_index": 39
+  },
+  "official_test_record": {
+    "document_metadata": {
+      "document_id": "GLCO-1850-08-13-a-p0002_par58",
+      "primary_dataset_name": "impresso-snippets",
+      "primary_dataset_filename": "v2025-12-04/BL/GLCO/pages/GLCO-1850/GLCO-1850-08-13-a-pages.jsonl.bz2",
+      "primary_dataset_doi": "",
+      "primary_dataset_version": "1.0",
+      "primary_dataset_license": "CC-BY-NC-SA 4.0",
+      "benchmark_dataset_name": "hipe-ocrepair-bench-impresso-snippets",
+      "benchmark_dataset_split": "test",
+      "document_type": "newspaper",
+      "date": "1850-08-13",
+      "language": "en",
+      "publication_title": "GLCO-1850-08-13-a-p0002",
+      "transcription_unit_scope": "paragraph"
+    },
+    "ocr_hypothesis": {
+      "transcription_unit": "LONDON CORN MARKET, AUG. 12.\nThe rates obtained for Euglish wheat were equal to last Mon¬\nday's prices, but millers evice little desire to operate, but the\nsupply is limited. Foreign held for full prices, but sales limited.\nOats attracted little atteution, but inferior rather lower. Flour\ntrade quiet at last Monday's rates. Barley fetched fill terms, and\nbut little done. In the value of beans no change, and trade quiet.\nFor Indian corn the demand slow. English white wheat, 43s, to\n50s.; red, 41s. to 45s.\nARRIVALS.— British— Wheat, 3,320; barley, 34; oats, 229; malt,\n6,123; flour, 8,405. Irish-Malt, 46. Foreign-Wheat, 23,625;\nbarley, 7,673; oats, 26,001 ; flour, 6,920 sacks, 30 barrels.\nSECOND REPORT.—No particular change since this morning.\nLittle done in British or foreign wheat, or other articles. There\nwas heavy rain, with thander; but there are symptoms of change.",
+      "num_tokens": 142,
+      "num_chars": 880,
+      "line_offsets": [
+        [0, 28],
+        [29, 89],
+        [90, 155],
+        [156, 223],
+        [224, 289],
+        [290, 356],
+        [357, 423],
+        [424, 485],
+        [486, 509],
+        [510, 572],
+        [573, 632],
+        [633, 694],
+        [695, 750],
+        [751, 816],
+        [817, 880]
+      ],
+      "paragraph_offsets": [[0, 880]],
+      "quality_report": {
+        "cer": 0.012514,
+        "wer": 0.09523809523809523,
+        "nb_char_substitutions": 8,
+        "nb_char_deletions": 1,
+        "nb_char_insertions": 2,
+        "nb_char_errors": 11
+      }
+    },
+    "ground_truth": {
+      "transcription_unit": "LONDON CORN MARKET, AUG. 12.\nThe rates obtained for English wheat were equal to last Mon¬\nday's prices, but millers evince little desire to operate, but the\nsupply is limited. Foreign held for full prices, but sales limited.\nOats attracted little attention, but inferior rather lower. Flour\ntrade quiet at last Monday's rates. Barley fetched full terms, and\nbut little done. In the value of beans no change, and trade quiet.\nFor Indian corn the demand slow. English white wheat, 43s, to\n50s.; red, 41s. to 45s.\nARRIVALS.—British—Wheat, 3,320; barley, 34; oats, 229; malt,\n5,123; flour, 8,405. Irish-Malt, 45. Foreign-Wheat, 23,525;\nbarley, 7,673; oats, 25,001 ; flour, 6,920 sacks, 30 barrels.\nSECOND REPORT.—No particular change since this morning.\nLittle done in British or foreign wheat, or other articles. There\nwas heavy rain, with thunder; but there are symptoms of change.",
+      "num_tokens": 140,
+      "num_chars": 879,
+      "line_offsets": [
+        [0, 28],
+        [29, 89],
+        [90, 156],
+        [157, 224],
+        [225, 290],
+        [291, 357],
+        [358, 424],
+        [425, 486],
+        [487, 510],
+        [511, 571],
+        [572, 631],
+        [632, 693],
+        [694, 749],
+        [750, 815],
+        [816, 879]
+      ],
+      "paragraph_offsets": [[0, 879]],
+      "quality_report": {}
+    }
+  },
+  "dsl_inference": {
+    "protocol": "Single forward pass with per-position argmax. No iterative decoding or post-processing.",
+    "transcription_unit": "LONDON CORN MARKET, AUG. 12.\nThe rates obtained for English wheat were equal to last Mon¬\nday's prices, but millers evince little desire to operate, but the\nsupply is limited. Foreign held for full prices, but sales limited.\nOats attracted little atteution, but inferior rather lower. Flour\ntrade quiet at last Monday's rates. Barley fetched fill terms, and\nbut little done. In the value of beans no change, and trade quiet.\nFor Indian corn the demand slow. English white wheat, 43s, to\n50s.; red, 41s. to 45s.\nARRIVALS.— British— Wheat, 3,320; barley, 34; oats, 229; malt,\n6,123; flour, 8,405. Irish-Malt, 46. Foreign-Wheat, 23,625;\nbarley, 7,673; oats, 26,001 ; flour, 6,920 sacks, 30 barrels.\nSECOND REPORT.—No particular change since this morning.\nLittle done in British or foreign wheat, or other articles. There\nwas heavy rain, with thunder; but there are symptoms of change.",
+    "token_count": 289,
+    "changed_token_positions": [
+      {
+        "position": 18,
+        "ocr_token": " Eug",
+        "dsl_token": " Eng",
+        "ocr_word": "Euglish",
+        "dsl_word": "English",
+        "matches_ground_truth": true
+      },
+      {
+        "position": 36,
+        "ocr_token": "ice",
+        "dsl_token": "ince",
+        "ocr_word": "evice",
+        "dsl_word": "evince",
+        "matches_ground_truth": true
+      },
+      {
+        "position": 280,
+        "ocr_token": "ander",
+        "dsl_token": "under",
+        "ocr_word": "thander",
+        "dsl_word": "thunder",
+        "matches_ground_truth": true
+      }
+    ],
+    "simple_word_edit_distance": {
+      "raw_ocr_to_ground_truth": 9,
+      "dsl_output_to_ground_truth": 6
+    }
+  }
+}

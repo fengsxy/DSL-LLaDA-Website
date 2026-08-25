@@ -13,8 +13,14 @@ The unified project page presents the paper, method, results, resources, and an
 interactive replay that compares DSL-LLaDA with LLaDA using matched generation
 protocols on:
 
-- XSum summarization at NFE 8
+- Three XSum summarization cases at NFE 8 and 32
 - Three-day Shanghai trip planning at NFE 32
+
+The results page also includes a selective OCR repair case from the original
+HIPE-OCRepair Impresso English test split, plus aggregate results across the
+three official English test domains. The complete source record, human
+transcript, one-pass model output, dataset commit, and checksums are published
+in `demo/traces/ocr_impresso_case_39.json`.
 
 All displayed generations and intermediate states are frozen traces produced
 by the public

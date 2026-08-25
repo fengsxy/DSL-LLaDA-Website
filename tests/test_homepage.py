@@ -16,6 +16,7 @@ class WebsiteTests(unittest.TestCase):
         self.assertIn('id="demo"', html)
         self.assertIn('id="method"', html)
         self.assertIn('id="results"', html)
+        self.assertIn('id="ocr"', html)
         self.assertIn('id="scope"', html)
         self.assertIn('id="resources"', html)
         self.assertIn('id="source-dialog"', html)
@@ -23,7 +24,8 @@ class WebsiteTests(unittest.TestCase):
         self.assertLess(html.index('id="top"'), html.index('id="demo"'))
         self.assertLess(html.index('id="demo"'), html.index('id="method"'))
         self.assertLess(html.index('id="method"'), html.index('id="results"'))
-        self.assertLess(html.index('id="results"'), html.index('id="scope"'))
+        self.assertLess(html.index('id="results"'), html.index('id="ocr"'))
+        self.assertLess(html.index('id="ocr"'), html.index('id="scope"'))
         self.assertNotIn('class="token-canvas"', html)
         self.assertNotIn("renderTokens(", html)
         self.assertNotIn('href="about.html"', html)
@@ -87,6 +89,10 @@ class WebsiteTests(unittest.TestCase):
             self.assertGreater(asset_path.stat().st_size, 10_000)
             self.assertIn(f'"/assets/{asset}"', replay_server)
 
+        self.assertIn(
+            '"/demo/traces/ocr_impresso_case_39.json"', replay_server
+        )
+
     def test_visible_copy_does_not_use_beta1_branding(self):
         for page in ("index.html", "about.html"):
             html = (ROOT / page).read_text(encoding="utf-8")
@@ -116,10 +122,21 @@ class WebsiteTests(unittest.TestCase):
         cases = showcase["cases"]
 
         self.assertEqual(
+            [case["key"] for case in cases],
+            [
+                "xsum-6",
+                "xsum-4",
+                "xsum-16",
+                "travel-anchored-1-seed1",
+            ],
+        )
+        self.assertEqual(
             [case["task"] for case in cases],
-            ["xsum", "travel"],
+            ["xsum", "xsum", "xsum", "travel"],
         )
         self.assertEqual(showcase["metadata"]["protocols"]["xsum-6"]["nfe"], 8)
+        self.assertEqual(showcase["metadata"]["protocols"]["xsum-4"]["nfe"], 32)
+        self.assertEqual(showcase["metadata"]["protocols"]["xsum-16"]["nfe"], 32)
         self.assertEqual(
             showcase["metadata"]["protocols"]["travel-anchored-1-seed1"]["nfe"],
             32,
@@ -146,9 +163,17 @@ class WebsiteTests(unittest.TestCase):
             self.assertTrue(case["llada"]["output"])
 
         travel = next(case for case in cases if case["task"] == "travel")
-        summary = next(case for case in cases if case["task"] == "xsum")
+        summary = next(case for case in cases if case["key"] == "xsum-6")
+        fasting = next(case for case in cases if case["key"] == "xsum-4")
+        climate = next(case for case in cases if case["key"] == "xsum-16")
         self.assertGreater(len(summary["prompt"]), 5_000)
         self.assertIn(summary["source"], summary["prompt"])
+        self.assertIn(fasting["source"], fasting["prompt"])
+        self.assertIn(climate["source"], climate["prompt"])
+        self.assertEqual(fasting["dsl"]["run"]["seed"], 42)
+        self.assertEqual(climate["dsl"]["run"]["seed"], 42)
+        self.assertNotIn("diabetes in diabetes", fasting["dsl"]["output"].lower())
+        self.assertNotIn("global warming global warming", climate["dsl"]["output"].lower())
         self.assertEqual(travel["key"], "travel-anchored-1-seed1")
         self.assertEqual(travel["dsl"]["run"]["seed"], 1)
         self.assertEqual(travel["plan_evaluation"]["dsl"]["day_sections"], 3)
@@ -160,6 +185,60 @@ class WebsiteTests(unittest.TestCase):
         self.assertNotIn(
             "mailbox",
             json.dumps(showcase).lower(),
+        )
+
+    def test_ocr_case_uses_original_test_record_and_verified_probe(self):
+        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        case = json.loads(
+            (ROOT / "demo" / "traces" / "ocr_impresso_case_39.json").read_text(
+                encoding="utf-8"
+            )
+        )
+
+        self.assertIn("Repair the errors. Preserve the document.", html)
+        self.assertIn("all three official", html)
+        self.assertIn("English HIPE-OCRepair domains", html)
+        self.assertIn("GLCO-1850-08-13-a-p0002_par58", html)
+        for word in (
+            "Euglish",
+            "English",
+            "evice",
+            "evince",
+            "thander",
+            "thunder",
+        ):
+            self.assertIn(word, html)
+        self.assertIn("99.85%", html)
+        self.assertIn("88.01%", html)
+
+        provenance = case["provenance"]
+        record = case["official_test_record"]
+        inference = case["dsl_inference"]
+        self.assertEqual(provenance["jsonl_line"], 40)
+        self.assertEqual(
+            provenance["dataset_commit"],
+            "1bfecaf96caa01f7b80736101baad9f691904e77",
+        )
+        self.assertEqual(
+            record["document_metadata"]["benchmark_dataset_split"], "test"
+        )
+        self.assertEqual(
+            record["document_metadata"]["document_id"],
+            "GLCO-1850-08-13-a-p0002_par58",
+        )
+        self.assertEqual(len(inference["changed_token_positions"]), 3)
+        self.assertTrue(
+            all(
+                change["matches_ground_truth"]
+                for change in inference["changed_token_positions"]
+            )
+        )
+        self.assertEqual(
+            inference["simple_word_edit_distance"],
+            {
+                "raw_ocr_to_ground_truth": 9,
+                "dsl_output_to_ground_truth": 6,
+            },
         )
 
     def test_release_excludes_large_or_runtime_only_artifacts(self):

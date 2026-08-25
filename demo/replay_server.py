@@ -30,6 +30,10 @@ ROUTES = {
         ROOT_DIR / "demo" / "traces" / "showcase.json",
         "application/json; charset=utf-8",
     ),
+    "/demo/traces/ocr_impresso_case_39.json": (
+        ROOT_DIR / "demo" / "traces" / "ocr_impresso_case_39.json",
+        "application/json; charset=utf-8",
+    ),
 }
 
 

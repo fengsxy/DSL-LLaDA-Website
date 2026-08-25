@@ -867,6 +867,220 @@
         font-size: 13px;
       }
 
+      .ocr-case {
+        margin-top: 46px;
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .ocr-case-head {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 30px;
+        align-items: end;
+        padding: 20px 0;
+      }
+
+      .ocr-case-kicker {
+        margin: 0 0 4px;
+        color: var(--green-deep);
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .ocr-case-head h3 {
+        margin: 0;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 15px;
+        overflow-wrap: anywhere;
+      }
+
+      .ocr-case-meta {
+        display: flex;
+        gap: 24px;
+        align-items: end;
+      }
+
+      .ocr-case-meta span {
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1.35;
+      }
+
+      .ocr-case-meta strong {
+        display: block;
+        color: var(--ink);
+        font-size: 19px;
+        line-height: 1.1;
+      }
+
+      .ocr-pair {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        border-top: 1px solid var(--line);
+      }
+
+      .ocr-text-block {
+        min-width: 0;
+        padding: 24px 26px 26px 0;
+      }
+
+      .ocr-text-block + .ocr-text-block {
+        padding-right: 0;
+        padding-left: 26px;
+        border-left: 1px solid var(--line);
+      }
+
+      .ocr-text-block h4 {
+        margin: 0 0 14px;
+        font-size: 13px;
+        text-transform: uppercase;
+      }
+
+      .ocr-text-block p {
+        margin: 0;
+        color: #303832;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 16px;
+        line-height: 1.7;
+      }
+
+      .ocr-text-block p + p {
+        margin-top: 13px;
+      }
+
+      .ocr-error,
+      .ocr-fix {
+        padding: 1px 3px;
+        border-radius: 2px;
+        font-weight: 700;
+      }
+
+      .ocr-error {
+        background: #fee5df;
+        color: #9e3523;
+      }
+
+      .ocr-fix {
+        background: #dff5ea;
+        color: #096746;
+      }
+
+      .ocr-case-foot {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px 24px;
+        padding: 16px 0;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .ocr-case-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+
+      .ocr-case-links a {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--green-deep);
+        font-weight: 800;
+        text-decoration: none;
+      }
+
+      .ocr-case-links a:hover,
+      .ocr-case-links a:focus-visible {
+        text-decoration: underline;
+      }
+
+      .ocr-case-links svg {
+        width: 14px;
+        height: 14px;
+      }
+
+      .ocr-evidence {
+        display: grid;
+        grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.65fr);
+        gap: 46px;
+        margin-top: 52px;
+      }
+
+      .ocr-table-block {
+        min-width: 0;
+        padding-top: 17px;
+        border-top: 3px solid var(--ink);
+      }
+
+      .ocr-table-block + .ocr-table-block {
+        border-top-color: var(--green-deep);
+      }
+
+      .ocr-table-block h3 {
+        margin: 0 0 7px;
+        font-size: 17px;
+      }
+
+      .ocr-table-block > p {
+        margin: 0 0 18px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .metric-table-wrap {
+        max-width: 100%;
+        overflow-x: auto;
+      }
+
+      .metric-table {
+        width: 100%;
+        border-collapse: collapse;
+        color: #303832;
+        font-size: 13px;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .metric-table th,
+      .metric-table td {
+        padding: 11px 10px;
+        border-bottom: 1px solid var(--line);
+        text-align: right;
+        white-space: nowrap;
+      }
+
+      .metric-table th:first-child,
+      .metric-table td:first-child {
+        padding-left: 0;
+        text-align: left;
+      }
+
+      .metric-table th:last-child,
+      .metric-table td:last-child {
+        padding-right: 0;
+      }
+
+      .metric-table th {
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .metric-table td strong {
+        color: var(--green-deep);
+      }
+
+      .metric-note {
+        margin-top: 12px;
+        color: var(--muted);
+        font-size: 11px;
+      }
+
       .scope-note {
         display: grid;
         grid-template-columns: auto minmax(0, 1fr);
@@ -1052,6 +1266,10 @@
 
         .resource-list {
           grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .ocr-evidence {
+          grid-template-columns: 1fr;
         }
       }
 
@@ -1262,6 +1480,100 @@
           grid-template-columns: 1fr;
         }
 
+        .ocr-case-head,
+        .ocr-pair {
+          grid-template-columns: 1fr;
+        }
+
+        .ocr-case-meta {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 10px;
+        }
+
+        .ocr-text-block,
+        .ocr-text-block + .ocr-text-block {
+          padding: 20px 0;
+          border-left: 0;
+        }
+
+        .ocr-text-block + .ocr-text-block {
+          border-top: 1px solid var(--line);
+        }
+
+        .ocr-text-block p {
+          font-size: 15px;
+        }
+
+        .ocr-case-foot {
+          align-items: flex-start;
+        }
+
+        .ocr-case-links {
+          flex-direction: column;
+          gap: 9px;
+        }
+
+        .ocr-evidence {
+          gap: 34px;
+          margin-top: 42px;
+        }
+
+        .domain-table {
+          display: block;
+        }
+
+        .domain-table thead {
+          display: none;
+        }
+
+        .domain-table tbody {
+          display: block;
+        }
+
+        .domain-table tr {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 5px 12px;
+          padding: 10px 0;
+          border-bottom: 1px solid var(--line);
+        }
+
+        .domain-table td,
+        .domain-table td:first-child,
+        .domain-table td:last-child {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 2px;
+          padding: 3px 0;
+          border: 0;
+          text-align: left;
+          white-space: normal;
+        }
+
+        .domain-table td:first-child,
+        .domain-table td:last-child {
+          grid-column: 1 / -1;
+        }
+
+        .domain-table td::before {
+          content: attr(data-label);
+          color: var(--muted);
+          font-size: 9px;
+          font-weight: 800;
+          text-transform: uppercase;
+        }
+
+        .domain-table td:first-child {
+          color: var(--ink);
+          font-weight: 800;
+        }
+
+        .domain-table td:last-child {
+          overflow-wrap: anywhere;
+        }
+
         .process-step,
         .process-step:nth-child(2) {
           min-height: auto;
@@ -1309,6 +1621,7 @@
         <a href="#demo">Demo</a>
         <a class="nav-detail" href="#method">Method</a>
         <a class="nav-detail" href="#results">Results</a>
+        <a class="nav-detail" href="#ocr">OCR</a>
         <a href="https://arxiv.org/abs/2606.01024">Paper</a>
         <a class="nav-detail" href="https://huggingface.co/liddlefish/DSL-LLaDA-Beta1">Model</a>
         <a class="nav-code" href="https://github.com/fengsxy/DSL-LLaDA">Code</a>
@@ -1654,7 +1967,192 @@
         </div>
       </section>
 
-      <section class="band" id="scope" aria-labelledby="scope-title">
+      <section class="band" id="ocr" aria-labelledby="ocr-title">
+        <div class="section-inner">
+          <div class="section-heading">
+            <div>
+              <p class="section-label">Selective OCR repair</p>
+              <h2 id="ocr-title">Repair the errors. Preserve the document.</h2>
+            </div>
+            <p class="section-lead">
+              The same continuous-noise adaptation repairs unreliable words
+              while leaving clean text intact. We test all three official
+              English HIPE-OCRepair domains, covering 233 documents.
+            </p>
+          </div>
+
+          <article class="ocr-case" aria-labelledby="ocr-case-title">
+            <div class="ocr-case-head">
+              <div>
+                <p class="ocr-case-kicker">
+                  Original Impresso English test record 40 of 100
+                </p>
+                <h3 id="ocr-case-title">
+                  GLCO-1850-08-13-a-p0002_par58
+                </h3>
+              </div>
+              <div class="ocr-case-meta" aria-label="Case results">
+                <span><strong>3</strong>positions changed</span>
+                <span><strong>3 / 3</strong>match the transcript</span>
+                <span><strong>9 to 6</strong>probe word edits</span>
+              </div>
+            </div>
+
+            <div class="ocr-pair">
+              <div class="ocr-text-block">
+                <h4>Raw OCR input</h4>
+                <p>
+                  The rates obtained for
+                  <mark class="ocr-error">Euglish</mark> wheat were equal to
+                  last Mon&not;<br>
+                  day's prices, but millers
+                  <mark class="ocr-error">evice</mark> little desire to
+                  operate, but the<br>
+                  supply is limited.
+                </p>
+                <p>
+                  There was heavy rain, with
+                  <mark class="ocr-error">thander</mark>; but there are
+                  symptoms of change.
+                </p>
+              </div>
+              <div class="ocr-text-block">
+                <h4>One-pass DSL output</h4>
+                <p>
+                  The rates obtained for
+                  <mark class="ocr-fix">English</mark> wheat were equal to
+                  last Mon&not;<br>
+                  day's prices, but millers
+                  <mark class="ocr-fix">evince</mark> little desire to
+                  operate, but the<br>
+                  supply is limited.
+                </p>
+                <p>
+                  There was heavy rain, with
+                  <mark class="ocr-fix">thunder</mark>; but there are
+                  symptoms of change.
+                </p>
+              </div>
+            </div>
+
+            <div class="ocr-case-foot">
+              <span>
+                Single forward pass. All three repaired words exactly match
+                the human transcript; every other model token is unchanged.
+              </span>
+              <div class="ocr-case-links">
+                <a
+                  href="https://github.com/hipe-eval/HIPE-OCRepair-2026-data/blob/1bfecaf96caa01f7b80736101baad9f691904e77/data/v0.9/impresso-snippets/en/hipe-ocrepair-bench_v0.9_impresso-snippets_v1.0_test_en.jsonl#L40"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <i data-lucide="external-link" aria-hidden="true"></i>
+                  <span>Official source record</span>
+                </a>
+                <a href="demo/traces/ocr_impresso_case_39.json">
+                  <i data-lucide="braces" aria-hidden="true"></i>
+                  <span>Full provenance JSON</span>
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <div class="ocr-evidence">
+            <div class="ocr-table-block">
+              <h3>All official English test domains</h3>
+              <p>
+                DSL reduces macro word matching error rate on every domain.
+              </p>
+              <div class="metric-table-wrap">
+                <table class="metric-table domain-table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Domain</th>
+                      <th scope="col">Docs</th>
+                      <th scope="col">Raw wMER</th>
+                      <th scope="col">DSL wMER</th>
+                      <th scope="col">Word PCIS, 95% CI</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td data-label="Domain">Impresso</td>
+                      <td data-label="Docs">100</td>
+                      <td data-label="Raw wMER">7.23</td>
+                      <td data-label="DSL wMER"><strong>6.57</strong></td>
+                      <td data-label="Word PCIS, 95% CI">
+                        0.0075 [0.0045, 0.0105]
+                      </td>
+                    </tr>
+                    <tr>
+                      <td data-label="Domain">ICDAR2017</td>
+                      <td data-label="Docs">101</td>
+                      <td data-label="Raw wMER">12.83</td>
+                      <td data-label="DSL wMER"><strong>11.62</strong></td>
+                      <td data-label="Word PCIS, 95% CI">
+                        0.0150 [0.0112, 0.0190]
+                      </td>
+                    </tr>
+                    <tr>
+                      <td data-label="Domain">Overproof</td>
+                      <td data-label="Docs">32</td>
+                      <td data-label="Raw wMER">23.30</td>
+                      <td data-label="DSL wMER"><strong>21.31</strong></td>
+                      <td data-label="Word PCIS, 95% CI">
+                        0.0306 [0.0203, 0.0415]
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <p class="metric-note">
+                Lower wMER is better. Every word-level PCIS confidence interval
+                is strictly above zero.
+              </p>
+            </div>
+
+            <div class="ocr-table-block">
+              <h3>Impresso selectivity</h3>
+              <p>
+                DSL improves OCR while retaining nearly all clean tokens.
+              </p>
+              <div class="metric-table-wrap">
+                <table class="metric-table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Method</th>
+                      <th scope="col">wMER</th>
+                      <th scope="col">Clean kept</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Raw OCR</td>
+                      <td>7.23</td>
+                      <td>100.00%</td>
+                    </tr>
+                    <tr>
+                      <td><strong>DSL-LLaDA</strong></td>
+                      <td><strong>6.57</strong></td>
+                      <td><strong>99.85%</strong></td>
+                    </tr>
+                    <tr>
+                      <td>XDLM</td>
+                      <td>20.60</td>
+                      <td>88.01%</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <p class="metric-note">
+                Clean kept is the share of originally correct words preserved.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="band alt" id="scope" aria-labelledby="scope-title">
         <div class="section-inner">
           <div class="section-heading">
             <div>
@@ -1688,7 +2186,7 @@
         </div>
       </section>
 
-      <section class="band alt" id="resources" aria-labelledby="resources-title">
+      <section class="band" id="resources" aria-labelledby="resources-title">
         <div class="section-inner">
           <div class="section-heading">
             <div>
@@ -1799,7 +2297,7 @@
       }
 
       function scenarioName(item) {
-        if (item.task === "xsum") return "News summary";
+        if (item.task === "xsum") return item.title || "News summary";
         if (item.task === "travel") return "Shanghai trip";
         return item.title;
       }
@@ -1873,8 +2371,14 @@
       }
 
       function captionFor(item) {
-        if (item.task === "xsum") {
+        if (item.key === "xsum-6") {
           return "<strong>Case study (NFE 8, 128 tokens).</strong> Discrete remasking cascades into degenerate token looping (<code>of of of...</code>), while continuous SDE denoises the entire sequence jointly and recovers a clean, coherent summary.";
+        }
+        if (item.key === "xsum-4") {
+          return "<strong>Fasting study (NFE 32, 128 tokens).</strong> DSL-LLaDA produces a complete one-sentence finding; the discrete output repeats a key term and stops after 11 words.";
+        }
+        if (item.key === "xsum-16") {
+          return "<strong>Climate data (NFE 32, 128 tokens).</strong> DSL-LLaDA returns a focused 31-word summary; the discrete path expands to 104 words and repeats phrases.";
         }
         if (item.task === "travel") {
           return "<strong>Trajectory replay (NFE 32, 64 tokens).</strong> Both methods produce three complete day sections under a matched protocol, contrasting continuous revision with discrete reveal.";
