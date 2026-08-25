@@ -16,6 +16,8 @@ class WebsiteTests(unittest.TestCase):
         self.assertIn("Findings of EMNLP 2026", html)
         self.assertIn('class="paper-cta"', html)
         self.assertIn("<span>Paper details</span>", html)
+        self.assertNotIn('class="token-canvas"', html)
+        self.assertNotIn("renderTokens(", html)
         self.assertNotIn('href="/about.html"', html)
         self.assertNotIn('href="/generate"', html)
         self.assertNotIn("Final output", html)
@@ -29,7 +31,8 @@ class WebsiteTests(unittest.TestCase):
         self.assertIn("Accepted to <strong>Findings of EMNLP 2026</strong>", about_html)
         self.assertIn("https://arxiv.org/abs/2606.01024", about_html)
         self.assertIn("assets/figure1final.png", about_html)
-        self.assertIn("assets/nfe_efficiency_curve.png", about_html)
+        self.assertIn("assets/nfe_efficiency_web.png", about_html)
+        self.assertIn("assets/nfe_efficiency_web_mobile.png", about_html)
         self.assertIn("Copy BibTeX", about_html)
         self.assertIn(
             "Qualitative trajectory case only; no aggregate performance claim.",
@@ -57,11 +60,34 @@ class WebsiteTests(unittest.TestCase):
             encoding="utf-8"
         )
 
-        for asset in ("figure1final.png", "nfe_efficiency_curve.png"):
+        for asset in (
+            "figure1final.png",
+            "nfe_efficiency_web.png",
+            "nfe_efficiency_web_mobile.png",
+        ):
             asset_path = ROOT / "assets" / asset
             self.assertTrue(asset_path.is_file())
             self.assertGreater(asset_path.stat().st_size, 10_000)
             self.assertIn(f'"/assets/{asset}"', replay_server)
+
+    def test_visible_copy_does_not_use_beta1_branding(self):
+        for page in ("index.html", "about.html"):
+            html = (ROOT / page).read_text(encoding="utf-8")
+            visible_copy = "\n".join(
+                part.split("<", 1)[0] for part in html.split(">")
+            )
+            self.assertNotIn("Beta1", visible_copy)
+            self.assertNotIn("Beta 1", visible_copy)
+
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        self.assertNotIn("[DSL-LLaDA Beta1 checkpoint]", readme)
+
+        showcase = json.loads(
+            (ROOT / "demo" / "traces" / "showcase.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertNotIn("checkpoint", showcase["metadata"])
 
     def test_showcase_contains_matched_real_traces(self):
         showcase = json.loads(
@@ -77,8 +103,14 @@ class WebsiteTests(unittest.TestCase):
         )
         self.assertEqual(showcase["metadata"]["protocols"]["xsum-6"]["nfe"], 8)
         self.assertEqual(
-            showcase["metadata"]["protocols"]["travel-0"]["nfe"],
+            showcase["metadata"]["protocols"]["travel-anchored-1-seed1"]["nfe"],
             32,
+        )
+        self.assertEqual(
+            showcase["metadata"]["protocols"]["travel-anchored-1-seed1"][
+                "dsl_seed"
+            ],
+            1,
         )
 
         for case in cases:
@@ -93,6 +125,16 @@ class WebsiteTests(unittest.TestCase):
             self.assertGreater(len(case["llada"]["trace"]), 1)
             self.assertTrue(case["dsl"]["output"])
             self.assertTrue(case["llada"]["output"])
+
+        travel = next(case for case in cases if case["task"] == "travel")
+        self.assertEqual(travel["key"], "travel-anchored-1-seed1")
+        self.assertEqual(travel["dsl"]["run"]["seed"], 1)
+        self.assertEqual(travel["plan_evaluation"]["dsl"]["day_sections"], 3)
+        self.assertEqual(
+            travel["plan_evaluation"]["dsl"]["trigram_repetition_rate"],
+            0.0,
+        )
+        self.assertNotIn("and and", travel["dsl"]["output"].lower())
 
     def test_release_excludes_large_or_runtime_only_artifacts(self):
         self.assertFalse(

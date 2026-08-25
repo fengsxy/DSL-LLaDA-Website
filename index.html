@@ -442,95 +442,6 @@
         text-align: right;
       }
 
-      .token-canvas {
-        --columns: 16;
-        position: relative;
-        display: grid;
-        grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
-        grid-auto-rows: 28px;
-        gap: 5px;
-        min-height: 98px;
-        padding: 16px 18px;
-        overflow: hidden;
-        background: #f3f6f4;
-      }
-
-      .token {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-width: 0;
-        height: 28px;
-        padding: 0 3px;
-        overflow: hidden;
-        border: 1px solid #cdd5cf;
-        border-radius: 3px;
-        background: #ffffff;
-        color: #29342d;
-        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-        font-size: 9px;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        transition:
-          background-color 180ms ease,
-          border-color 180ms ease,
-          color 180ms ease,
-          opacity 180ms ease;
-      }
-
-      .lane.dsl .token.conf-low {
-        border-color: #badfce;
-        background: #ecf8f2;
-      }
-
-      .lane.dsl .token.conf-mid {
-        border-color: #7acaa7;
-        background: #ceefdf;
-      }
-
-      .lane.dsl .token.conf-high {
-        border-color: #38aa7b;
-        background: #9ee2c5;
-        color: #103e2d;
-      }
-
-      .lane.llada .token.conf-low,
-      .lane.llada .token.conf-mid,
-      .lane.llada .token.conf-high {
-        border-color: #8eb2e5;
-        background: #dceaff;
-        color: #254a78;
-      }
-
-      .token.mask {
-        border-color: #d5dcd7;
-        background: #eaeeeb;
-        color: #8b978f;
-      }
-
-      .token.continuous {
-        border-color: #a7d7c2;
-        background: #e7f7ef;
-        color: var(--green-deep);
-      }
-
-      .token.changed {
-        border-color: var(--yellow);
-        box-shadow: inset 0 0 0 1px var(--yellow);
-      }
-
-      .token-more {
-        position: absolute;
-        right: 18px;
-        bottom: 14px;
-        padding: 2px 5px;
-        border-radius: 3px;
-        background: #e4e9e5;
-        color: #647068;
-        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-        font-size: 9px;
-      }
-
       .lane-output {
         display: grid;
         grid-template-columns: 84px minmax(0, 1fr);
@@ -565,9 +476,8 @@
         display: grid;
         grid-template-columns: 84px minmax(0, 1fr);
         gap: 16px;
-        min-height: 220px;
+        min-height: 292px;
         padding: 18px;
-        border-bottom: 1px solid #e2e7e3;
         background: #fbfcfb;
       }
 
@@ -579,12 +489,16 @@
       }
 
       .frame-copy-text {
-        max-height: 184px;
+        min-width: 0;
+        max-width: 100%;
+        max-height: 256px;
         margin: 0;
-        overflow: auto;
+        overflow-x: hidden;
+        overflow-y: auto;
         color: #344139;
         font-size: 14px;
         line-height: 1.6;
+        overflow-wrap: anywhere;
         white-space: pre-wrap;
       }
 
@@ -957,16 +871,6 @@
           scroll-snap-align: start;
         }
 
-        .token-canvas {
-          --columns: 12;
-          grid-auto-rows: 26px;
-          min-height: 82px;
-        }
-
-        .token {
-          height: 26px;
-        }
-
         .lane-output {
           grid-template-columns: 1fr;
           gap: 3px;
@@ -986,7 +890,7 @@
         .frame-copy {
           grid-template-columns: 1fr;
           gap: 3px;
-          min-height: 172px;
+          min-height: 220px;
           padding: 14px 16px;
         }
 
@@ -995,7 +899,7 @@
         }
 
         .frame-copy-text {
-          max-height: 144px;
+          max-height: 192px;
           font-size: 13px;
         }
 
@@ -1069,16 +973,12 @@
         html {
           scroll-behavior: auto;
         }
-
-        .token {
-          transition: none;
-        }
       }
     </style>
   </head>
   <body>
     <header class="topbar">
-      <a class="brand" href="index.html">DSL-LLaDA <small>Beta1</small></a>
+      <a class="brand" href="index.html">DSL-LLaDA</a>
       <nav class="nav" aria-label="Primary navigation">
         <a href="about.html">Paper</a>
         <a href="https://huggingface.co/liddlefish/DSL-LLaDA-Beta1">Model</a>
@@ -1095,7 +995,8 @@
               <h1 id="page-title">DSL-LLaDA</h1>
               <p class="subtitle">
                 Scaling continuous denoising to an 8B masked diffusion LM with a short
-                adaptation run. The comparison below replays real Beta1 generation traces.
+                adaptation run. The comparison below replays frozen generation
+                traces from the released model.
               </p>
             </div>
             <div class="hero-actions" aria-label="Project links">
@@ -1173,7 +1074,6 @@
                   <div class="frame-copy-label">Current decode</div>
                   <p class="frame-copy-text" id="dsl-frame-text"></p>
                 </div>
-                <div class="token-canvas" id="dsl-tokens" aria-label="DSL-LLaDA token state"></div>
               </article>
 
               <article class="lane llada" aria-labelledby="llada-title">
@@ -1195,11 +1095,6 @@
                   <div class="frame-copy-label">Current decode</div>
                   <p class="frame-copy-text" id="llada-frame-text"></p>
                 </div>
-                <div
-                  class="token-canvas"
-                  id="llada-tokens"
-                  aria-label="LLaDA token state"
-                ></div>
               </article>
             </div>
 
@@ -1234,12 +1129,11 @@
     </main>
 
     <footer>
-      Frozen Beta1 trace replay. <a href="about.html">Read the paper overview</a>.
+      Frozen matched trace replay. <a href="about.html">Read the paper overview</a>.
     </footer>
 
     <script>
       const TRACE_URL = "demo/traces/showcase.json";
-      const MAX_VISIBLE_TOKENS = 64;
       const PLAY_DURATION_MS = 6200;
 
       const state = {
@@ -1262,8 +1156,6 @@
         replayTop: document.getElementById("replay-top"),
         timeline: document.getElementById("timeline"),
         timelineReadout: document.getElementById("timeline-readout"),
-        dslTokens: document.getElementById("dsl-tokens"),
-        lladaTokens: document.getElementById("llada-tokens"),
         dslState: document.getElementById("dsl-state"),
         lladaState: document.getElementById("llada-state"),
         dslStat: document.getElementById("dsl-stat"),
@@ -1290,51 +1182,6 @@
         return item.title;
       }
 
-      function cleanToken(raw) {
-        if (raw === "[MASK]") return "MASK";
-        if (raw === "[continuous]") return "\u00b7";
-        if (raw.includes("<|endoftext|>")) return "EOS";
-        const cleaned = raw
-          .replace(/^\u0120/, "")
-          .replace(/\u010a/g, "NL")
-          .replace(/\u2581/g, "");
-        return cleaned || "\u00b7";
-      }
-
-      function confidenceClass(value) {
-        if (value >= 0.7) return "conf-high";
-        if (value >= 0.3) return "conf-mid";
-        return "conf-low";
-      }
-
-      function renderTokens(container, frame) {
-        container.replaceChildren();
-        const changed = new Set(frame.changed_positions || frame.new_positions || []);
-        const tokenLimit = window.matchMedia("(max-width: 680px)").matches
-          ? 24
-          : 32;
-        const tokens = frame.tokens.slice(0, tokenLimit);
-        const confidence = frame.confidence || [];
-
-        tokens.forEach((raw, index) => {
-          const token = document.createElement("span");
-          token.className = `token ${confidenceClass(confidence[index] || 0)}`;
-          if (raw === "[MASK]") token.classList.add("mask");
-          if (raw === "[continuous]") token.classList.add("continuous");
-          if (changed.has(index)) token.classList.add("changed");
-          token.textContent = cleanToken(raw);
-          token.title = `position ${index}: ${raw}`;
-          container.appendChild(token);
-        });
-
-        if (frame.tokens.length > tokenLimit) {
-          const more = document.createElement("span");
-          more.className = "token-more";
-          more.textContent = `+${frame.tokens.length - tokenLimit}`;
-          container.appendChild(more);
-        }
-      }
-
       function frameAt(trace, progress) {
         const index = Math.min(
           trace.length - 1,
@@ -1348,14 +1195,11 @@
         const trace = item[method].trace;
         const { frame, index } = frameAt(trace, progress);
         const isDsl = method === "dsl";
-        const tokenRoot = isDsl ? elements.dslTokens : elements.lladaTokens;
         const stateRoot = isDsl ? elements.dslState : elements.lladaState;
         const statRoot = isDsl ? elements.dslStat : elements.lladaStat;
         const frameTextRoot = isDsl
           ? elements.dslFrameText
           : elements.lladaFrameText;
-
-        renderTokens(tokenRoot, frame);
 
         if (isDsl) {
           if (frame.stage === "noise") {

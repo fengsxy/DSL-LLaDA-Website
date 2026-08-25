@@ -18,8 +18,12 @@ ROUTES = {
         ROOT_DIR / "assets" / "figure1final.png",
         "image/png",
     ),
-    "/assets/nfe_efficiency_curve.png": (
-        ROOT_DIR / "assets" / "nfe_efficiency_curve.png",
+    "/assets/nfe_efficiency_web.png": (
+        ROOT_DIR / "assets" / "nfe_efficiency_web.png",
+        "image/png",
+    ),
+    "/assets/nfe_efficiency_web_mobile.png": (
+        ROOT_DIR / "assets" / "nfe_efficiency_web_mobile.png",
         "image/png",
     ),
     "/demo/traces/showcase.json": (

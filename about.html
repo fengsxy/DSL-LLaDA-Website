@@ -610,7 +610,7 @@
   </head>
   <body>
     <header class="topbar">
-      <a class="brand" href="index.html">DSL-LLaDA <small>Beta1</small></a>
+      <a class="brand" href="index.html">DSL-LLaDA</a>
       <nav class="nav" aria-label="Primary navigation">
         <a href="index.html">Demo</a>
         <a href="#results">Results</a>
@@ -771,18 +771,29 @@
               generation quality.
             </p>
           </div>
-          <figure class="paper-figure">
-            <img
-              src="assets/nfe_efficiency_curve.png"
-              width="1600"
-              height="1151"
-              alt="Generation fluency, repetition rate, and output length across NFE budgets for DSL-LLaDA and discrete baselines"
-            >
+          <figure class="paper-figure results-figure">
+            <picture>
+              <source
+                media="(max-width: 600px)"
+                srcset="assets/nfe_efficiency_web_mobile.png"
+                width="2160"
+                height="3900"
+              >
+              <img
+                src="assets/nfe_efficiency_web.png"
+                width="3600"
+                height="3420"
+                loading="lazy"
+                decoding="async"
+                alt="Three full-width plots compare generation perplexity, repetition rate, and output length across NFE budgets for DSL-LLaDA-SDE, LLaDA, and LLaDA with EOS suppression and block remasking"
+              >
+            </picture>
             <figcaption>
               Open-ended generation on 200 prompts with 256-token outputs.
-              DSL-LLaDA-SDE maintains low repetition and full-length generations
-              across NFE budgets, while discrete variants either terminate early
-              or repeat heavily at low NFE.
+              The shaded region marks NFE 8--16. Open markers in the fluency
+              panel are unreliable perplexity estimates because repetition
+              exceeds 30%. DSL-LLaDA-SDE keeps repetition below 9% while
+              producing substantially longer outputs than vanilla LLaDA.
             </figcaption>
           </figure>
           <div class="evidence-grid">
@@ -829,7 +840,7 @@
             <h2>Watch the decode evolve.</h2>
             <p>
               The demo replays frozen outputs and intermediate states from the
-              public Beta1 checkpoint. Every pair uses the same prompt, response
+              released checkpoint. Every pair uses the same prompt, response
               length, and NFE budget.
             </p>
           </div>
@@ -864,8 +875,8 @@
           <div class="section-head">
             <h2>Public artifacts.</h2>
             <p>
-              Read the paper, inspect the replay, download Beta1, or reproduce
-              the method from the released implementation.
+              Read the paper, inspect the replay, download the model checkpoint,
+              or reproduce the method from the released implementation.
             </p>
           </div>
           <div class="resource-list">

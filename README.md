@@ -18,7 +18,7 @@ protocols on:
 
 All displayed generations and intermediate states are frozen traces produced
 by the public
-[DSL-LLaDA Beta1 checkpoint](https://huggingface.co/liddlefish/DSL-LLaDA-Beta1).
+[DSL-LLaDA checkpoint](https://huggingface.co/liddlefish/DSL-LLaDA-Beta1).
 The site does not load a model or require a GPU.
 
 ## Run Locally
