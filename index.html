@@ -785,19 +785,29 @@
         color: var(--ink);
       }
 
-      .scope-copy {
+      .scope-list {
         max-width: 900px;
         margin-left: auto;
-        color: #303832;
-        font-size: 17px;
+        border-top: 1px solid var(--line);
       }
 
-      .scope-copy p {
+      .scope-item {
+        display: grid;
+        grid-template-columns: minmax(210px, 0.34fr) minmax(0, 0.66fr);
+        gap: 30px;
+        padding: 20px 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .scope-item h3 {
         margin: 0;
+        font-size: 16px;
       }
 
-      .scope-copy p + p {
-        margin-top: 18px;
+      .scope-item p {
+        margin: 0;
+        color: #303832;
+        font-size: 16px;
       }
 
       .resource-list {
@@ -1115,6 +1125,11 @@
           gap: 18px;
         }
 
+        .scope-item {
+          grid-template-columns: 1fr;
+          gap: 8px;
+        }
+
         h2 {
           font-size: 30px;
         }
@@ -1367,12 +1382,16 @@
           <div class="section-heading">
             <div>
               <p class="section-label">Method</p>
-              <h2 id="method-title">From hard masks to continuous states.</h2>
+              <h2 id="method-title">
+                Bridge continuous diffusion to a pretrained 8B backbone.
+              </h2>
             </div>
             <p class="section-lead">
-              DSL-LLaDA replaces binary masking with graded per-token
-              uncertainty, then maps each noisy state back into the pretrained
-              backbone without changing the 8B architecture.
+              Standard masked diffusion forces a binary input: a clean token or
+              <code>[MASK]</code>. DSL-LLaDA adds continuous per-token Gaussian
+              noise at varying SNR, then uses a lightweight softmax converter to
+              feed soft embedding mixtures into the 8B backbone without
+              architectural changes.
             </p>
           </div>
           <figure class="paper-figure">
@@ -1385,10 +1404,9 @@
               alt="Original LLaDA uses discrete masked diffusion while DSL-LLaDA uses continuous per-token noise and a softmax converter"
             >
             <figcaption>
-              Original LLaDA sees either a clean token or a hard mask.
-              DSL-LLaDA trains on continuous per-token noise at varying
-              signal-to-noise ratios, producing inputs that move from mask-like
-              uncertainty to clear token evidence.
+              The converter exposes the existing backbone to three uncertainty
+              phases: mask-like at low SNR, unreliable at intermediate SNR, and
+              clear token evidence at high SNR.
             </figcaption>
           </figure>
           <div class="process">
@@ -1459,11 +1477,12 @@
               >
             </picture>
             <figcaption>
-              Generation quality across compute budgets on 200 prompts with
-              256-token outputs. DSL-LLaDA-SDE stays below 9% repetition while
-              producing substantially longer outputs than vanilla LLaDA. Open
-              markers denote unreliable perplexity estimates when repetition
-              exceeds 30%.
+              <strong>Joint quality diagnostics (200 prompts, 256 tokens).</strong>
+              At low NFE, iterative unmasking trades early termination for
+              fluent looping. In this evaluation, DSL-LLaDA-SDE avoids that
+              tradeoff, maintaining sub-9% repetition, more than 150 output
+              words, and lower perplexity than vanilla LLaDA across all tested
+              budgets.
             </figcaption>
           </figure>
           <div class="evidence-grid">
@@ -1471,24 +1490,24 @@
               <span class="evidence-value">4 / 4</span>
               <h3>Few-step summarization</h3>
               <p>
-                Best ROUGE-1 on XSum, CNN/DailyMail, PubMed, and arXiv at NFE 8
-                and 16 without length-control heuristics.
+                Best ROUGE-1 across XSum, CNN/DM, PubMed, and arXiv at NFE 8 and
+                16 without length heuristics.
               </p>
             </article>
             <article class="evidence-item">
               <span class="evidence-value">&lt;9%</span>
-              <h3>Continuous stability</h3>
+              <h3>Repetition rate</h3>
               <p>
-                Repetition remains below 9% across every tested NFE budget in
-                the 200-prompt generation experiment.
+                Stays below 9% from NFE 8 to 128, while the length-controlled
+                EOS+block baseline exceeds 80% at NFE 8 and 16.
               </p>
             </article>
             <article class="evidence-item">
               <span class="evidence-value">&gt;98%</span>
-              <h3>Selective robustness</h3>
+              <h3>Clean-token preservation</h3>
               <p>
-                More than 98% of clean tokens remain unchanged at 10%, 30%, and
-                50% random corruption.
+                Selectively corrects random-token corruptions while preserving
+                more than 98% of uncorrupted positions.
               </p>
             </article>
           </div>
@@ -1500,26 +1519,31 @@
           <div class="section-heading">
             <div>
               <p class="section-label">Scope</p>
-              <h2 id="scope-title">Where continuous 8B diffusion is strongest.</h2>
+              <h2 id="scope-title">Where continuous 8B diffusion excels.</h2>
             </div>
             <p class="section-lead">
-              The clearest gains appear in low-step, source-grounded generation
-              such as summarization and instruction following.
+              Task structure and compute budget determine which inference path
+              is most effective.
             </p>
           </div>
-          <div class="scope-copy">
-            <p>
-              At NFE 16 or below, continuous SDE sampling avoids the severe
-              repetition and early termination failures of iterative unmasking.
-              The source document anchors the denoising trajectory and helps all
-              positions refine jointly.
-            </p>
-            <p>
-              At higher NFE, the advantage narrows. Vanilla LLaDA can match or
-              exceed SDE on long-reference tasks, while open-ended creative
-              generation remains challenging because parallel updates can
-              converge on repetitive semantic attractors.
-            </p>
+          <div class="scope-list">
+            <article class="scope-item">
+              <h3>Low NFE and grounded tasks</h3>
+              <p>
+                SDE delivers its largest gains at NFE 16 or below on
+                source-anchored generation, where context stabilizes joint
+                denoising.
+              </p>
+            </article>
+            <article class="scope-item">
+              <h3>High NFE and open-ended generation</h3>
+              <p>
+                At NFE 64, vanilla LLaDA can match or exceed SDE on long-reference
+                PubMed and arXiv once outputs reach reference length.
+                Unconstrained creative prompts remain challenging because
+                parallel updates can converge on semantic attractors.
+              </p>
+            </article>
           </div>
         </div>
       </section>
@@ -1708,12 +1732,12 @@
 
       function captionFor(item) {
         if (item.task === "xsum") {
-          return "<strong>Observed case.</strong> DSL-LLaDA avoids the repetition collapse in the matched-NFE LLaDA output. This is a selected example, not an aggregate score.";
+          return "<strong>Case study (NFE 8, 128 tokens).</strong> Discrete remasking cascades into degenerate token looping (<code>of of of...</code>), while continuous SDE denoises the entire sequence jointly and recovers a clean, coherent summary.";
         }
         if (item.task === "travel") {
-          return "<strong>Qualitative trajectory.</strong> Both methods produce three day sections at NFE 32. This case illustrates continuous revision versus discrete reveal; no benchmark win is claimed.";
+          return "<strong>Trajectory replay (NFE 32, 64 tokens).</strong> Both methods produce three complete day sections under a matched protocol, contrasting continuous revision with discrete reveal.";
         }
-        return "<strong>Observed case.</strong> DSL-LLaDA produces a recognizable mailbox warning subject while the matched-NFE LLaDA output repeats subwords.";
+        return "<strong>Email subject case (NFE 8, 64 tokens).</strong> Continuous SDE produces a recognizable mailbox warning while discrete remasking collapses into repeated subwords.";
       }
 
       function renderProgress(progress) {

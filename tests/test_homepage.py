@@ -34,7 +34,9 @@ class WebsiteTests(unittest.TestCase):
         html = (ROOT / "index.html").read_text(encoding="utf-8")
         about_html = (ROOT / "about.html").read_text(encoding="utf-8")
 
-        self.assertIn("From hard masks to continuous states.", html)
+        self.assertIn(
+            "Bridge continuous diffusion to a pretrained 8B backbone.", html
+        )
         self.assertIn("Accepted to <strong>Findings of EMNLP 2026</strong>", html)
         self.assertIn("https://arxiv.org/abs/2606.01024", html)
         self.assertIn("assets/figure1final.png", html)
@@ -42,9 +44,13 @@ class WebsiteTests(unittest.TestCase):
         self.assertIn("assets/nfe_efficiency_web_mobile.png", html)
         self.assertIn("Copy BibTeX", html)
         self.assertIn(
-            "This case illustrates continuous revision versus discrete reveal; no benchmark win is claimed.",
+            "Case study (NFE 8, 128 tokens).",
             html,
         )
+        self.assertIn("length-controlled", html)
+        self.assertIn("Where continuous 8B diffusion excels.", html)
+        self.assertNotIn("frozen 8B architecture", html)
+        self.assertNotIn("discrete and continuous quality converge", html)
 
         for author in (
             "Longxuan Yu",
