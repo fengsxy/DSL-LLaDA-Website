@@ -7,36 +7,43 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class WebsiteTests(unittest.TestCase):
-    def test_demo_page_is_static_and_pages_safe(self):
+    def test_unified_homepage_is_static_and_pages_safe(self):
         html = (ROOT / "index.html").read_text(encoding="utf-8")
 
         self.assertIn('<h1 id="page-title">DSL-LLaDA</h1>', html)
         self.assertIn('const TRACE_URL = "demo/traces/showcase.json"', html)
-        self.assertIn('href="about.html"', html)
         self.assertIn("Findings of EMNLP 2026", html)
-        self.assertIn('class="paper-cta"', html)
-        self.assertIn("<span>Paper details</span>", html)
+        self.assertIn('id="demo"', html)
+        self.assertIn('id="method"', html)
+        self.assertIn('id="results"', html)
+        self.assertIn('id="scope"', html)
+        self.assertIn('id="resources"', html)
+        self.assertLess(html.index('id="top"'), html.index('id="demo"'))
+        self.assertLess(html.index('id="demo"'), html.index('id="method"'))
+        self.assertLess(html.index('id="method"'), html.index('id="results"'))
+        self.assertLess(html.index('id="results"'), html.index('id="scope"'))
         self.assertNotIn('class="token-canvas"', html)
         self.assertNotIn("renderTokens(", html)
+        self.assertNotIn('href="about.html"', html)
+        self.assertNotIn('class="paper-cta"', html)
         self.assertNotIn('href="/about.html"', html)
         self.assertNotIn('href="/generate"', html)
         self.assertNotIn("Final output", html)
 
-    def test_paper_page_contains_verified_publication_details(self):
-        demo_html = (ROOT / "index.html").read_text(encoding="utf-8")
+    def test_homepage_contains_verified_publication_details(self):
+        html = (ROOT / "index.html").read_text(encoding="utf-8")
         about_html = (ROOT / "about.html").read_text(encoding="utf-8")
 
-        self.assertNotIn("Delay the hard decision.", demo_html)
-        self.assertIn("Delay the hard decision.", about_html)
-        self.assertIn("Accepted to <strong>Findings of EMNLP 2026</strong>", about_html)
-        self.assertIn("https://arxiv.org/abs/2606.01024", about_html)
-        self.assertIn("assets/figure1final.png", about_html)
-        self.assertIn("assets/nfe_efficiency_web.png", about_html)
-        self.assertIn("assets/nfe_efficiency_web_mobile.png", about_html)
-        self.assertIn("Copy BibTeX", about_html)
+        self.assertIn("From hard masks to continuous states.", html)
+        self.assertIn("Accepted to <strong>Findings of EMNLP 2026</strong>", html)
+        self.assertIn("https://arxiv.org/abs/2606.01024", html)
+        self.assertIn("assets/figure1final.png", html)
+        self.assertIn("assets/nfe_efficiency_web.png", html)
+        self.assertIn("assets/nfe_efficiency_web_mobile.png", html)
+        self.assertIn("Copy BibTeX", html)
         self.assertIn(
-            "Qualitative trajectory case only; no aggregate performance claim.",
-            about_html,
+            "This case illustrates continuous revision versus discrete reveal; no benchmark win is claimed.",
+            html,
         )
 
         for author in (
@@ -49,8 +56,10 @@ class WebsiteTests(unittest.TestCase):
             "Yue Dong",
             "Greg Ver Steeg",
         ):
-            self.assertIn(author, about_html)
+            self.assertIn(author, html)
 
+        self.assertIn('content="0; url=index.html"', about_html)
+        self.assertIn("window.location.replace(destination)", about_html)
         self.assertIn('href="index.html"', about_html)
         self.assertNotIn('href="/"', about_html)
         self.assertNotIn("/Users/", about_html)
@@ -78,6 +87,7 @@ class WebsiteTests(unittest.TestCase):
             )
             self.assertNotIn("Beta1", visible_copy)
             self.assertNotIn("Beta 1", visible_copy)
+            self.assertNotIn("\u2014", visible_copy)
 
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
         self.assertNotIn("[DSL-LLaDA Beta1 checkpoint]", readme)
