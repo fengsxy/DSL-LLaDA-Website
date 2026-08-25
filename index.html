@@ -406,7 +406,7 @@
       .prompt-text {
         max-width: 1060px;
         margin: 0;
-        overflow: hidden;
+        overflow: visible;
         color: #29332d;
         font-size: 14px;
         line-height: 1.55;
@@ -424,7 +424,112 @@
         overflow: hidden;
         color: #667168;
         -webkit-box-orient: vertical;
-        -webkit-line-clamp: 2;
+        -webkit-line-clamp: 3;
+      }
+
+      .prompt-source-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        min-height: 30px;
+        margin-top: 8px;
+        padding: 0 9px;
+        border: 1px solid var(--dark-line);
+        border-radius: 4px;
+        background: var(--white);
+        color: var(--green-deep);
+        font-size: 11px;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .prompt-source-button:hover,
+      .prompt-source-button:focus-visible {
+        border-color: var(--green-deep);
+      }
+
+      .prompt-source-button svg {
+        width: 14px;
+        height: 14px;
+      }
+
+      .source-dialog {
+        width: min(900px, calc(100% - 32px));
+        max-height: min(82vh, 760px);
+        padding: 0;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--white);
+        color: var(--ink);
+        box-shadow: 0 24px 80px rgba(21, 24, 22, 0.22);
+      }
+
+      .source-dialog::backdrop {
+        background: rgba(21, 24, 22, 0.58);
+      }
+
+      .source-dialog-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 18px 20px;
+        border-bottom: 1px solid var(--line);
+        background: var(--white);
+      }
+
+      .source-dialog-head h2 {
+        font-size: 22px;
+      }
+
+      .source-dialog-eyebrow {
+        margin: 0 0 3px;
+        color: var(--green-deep);
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .icon-button {
+        flex: 0 0 auto;
+        width: 38px;
+        height: 38px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--white);
+        color: var(--ink);
+        cursor: pointer;
+      }
+
+      .icon-button:hover,
+      .icon-button:focus-visible {
+        border-color: var(--green-deep);
+      }
+
+      .icon-button svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      pre.source-dialog-copy {
+        max-height: calc(min(82vh, 760px) - 83px);
+        margin: 0;
+        padding: 22px;
+        overflow: auto;
+        border: 0;
+        border-radius: 0;
+        background: #f6f8f6;
+        color: #253029;
+        font-family: inherit;
+        font-size: 14px;
+        line-height: 1.65;
+        overflow-wrap: anywhere;
+        white-space: pre-wrap;
       }
 
       .trace-controls {
@@ -1061,6 +1166,19 @@
           min-height: 74px;
         }
 
+        .source-dialog-head {
+          padding: 14px 16px;
+        }
+
+        .source-dialog-head h2 {
+          font-size: 20px;
+        }
+
+        pre.source-dialog-copy {
+          padding: 17px;
+          font-size: 13px;
+        }
+
         .trace-controls {
           grid-template-columns: auto minmax(100px, 1fr) auto;
           gap: 8px;
@@ -1374,6 +1492,28 @@
               Trace data could not be loaded.
             </div>
           </div>
+          <dialog
+            class="source-dialog"
+            id="source-dialog"
+            aria-labelledby="source-dialog-title"
+          >
+            <div class="source-dialog-head">
+              <div>
+                <p class="source-dialog-eyebrow">Source document</p>
+                <h2 id="source-dialog-title">Full prompt</h2>
+              </div>
+              <button
+                class="icon-button"
+                id="source-dialog-close"
+                type="button"
+                title="Close full prompt"
+                aria-label="Close full prompt"
+              >
+                <i data-lucide="x" aria-hidden="true"></i>
+              </button>
+            </div>
+            <pre class="source-dialog-copy" id="source-dialog-copy"></pre>
+          </dialog>
         </div>
       </section>
 
@@ -1649,6 +1789,9 @@
         caption: document.getElementById("trace-caption"),
         comparison: document.getElementById("comparison"),
         error: document.getElementById("load-error"),
+        sourceDialog: document.getElementById("source-dialog"),
+        sourceDialogCopy: document.getElementById("source-dialog-copy"),
+        sourceDialogClose: document.getElementById("source-dialog-close"),
       };
 
       function activeCase() {
@@ -1658,7 +1801,6 @@
       function scenarioName(item) {
         if (item.task === "xsum") return "News summary";
         if (item.task === "travel") return "Shanghai trip";
-        if (item.task === "aeslc") return "Email subject";
         return item.title;
       }
 
@@ -1737,7 +1879,7 @@
         if (item.task === "travel") {
           return "<strong>Trajectory replay (NFE 32, 64 tokens).</strong> Both methods produce three complete day sections under a matched protocol, contrasting continuous revision with discrete reveal.";
         }
-        return "<strong>Email subject case (NFE 8, 64 tokens).</strong> Continuous SDE produces a recognizable mailbox warning while discrete remasking collapses into repeated subwords.";
+        return "<strong>Matched trace.</strong> Both outputs use the same prompt, response length, and NFE budget.";
       }
 
       function renderProgress(progress) {
@@ -1763,6 +1905,23 @@
           source.className = "prompt-source";
           source.textContent = promptParts.slice(1).join(" ");
           elements.prompt.appendChild(source);
+
+          const sourceButton = document.createElement("button");
+          sourceButton.className = "prompt-source-button";
+          sourceButton.type = "button";
+          sourceButton.setAttribute("aria-haspopup", "dialog");
+          const sourceIcon = document.createElement("i");
+          sourceIcon.setAttribute("data-lucide", "file-text");
+          sourceIcon.setAttribute("aria-hidden", "true");
+          const sourceLabel = document.createElement("span");
+          sourceLabel.textContent = "Full source";
+          sourceButton.append(sourceIcon, sourceLabel);
+          sourceButton.addEventListener("click", () => {
+            elements.sourceDialogCopy.textContent = item.prompt;
+            elements.sourceDialog.showModal();
+          });
+          elements.prompt.appendChild(sourceButton);
+          if (window.lucide) window.lucide.createIcons();
         }
         elements.protocolNfe.textContent = `NFE ${protocol.nfe}`;
         elements.protocolLength.textContent = `${protocol.generation_tokens} tokens`;
@@ -1871,6 +2030,16 @@
       elements.timeline.addEventListener("input", (event) => {
         stopPlayback();
         renderProgress(Number(event.target.value) / 1000);
+      });
+
+      elements.sourceDialogClose.addEventListener("click", () => {
+        elements.sourceDialog.close();
+      });
+
+      elements.sourceDialog.addEventListener("click", (event) => {
+        if (event.target === elements.sourceDialog) {
+          elements.sourceDialog.close();
+        }
       });
 
       function initializeCitation() {

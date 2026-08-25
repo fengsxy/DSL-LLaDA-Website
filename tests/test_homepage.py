@@ -18,6 +18,8 @@ class WebsiteTests(unittest.TestCase):
         self.assertIn('id="results"', html)
         self.assertIn('id="scope"', html)
         self.assertIn('id="resources"', html)
+        self.assertIn('id="source-dialog"', html)
+        self.assertIn('sourceLabel.textContent = "Full source"', html)
         self.assertLess(html.index('id="top"'), html.index('id="demo"'))
         self.assertLess(html.index('id="demo"'), html.index('id="method"'))
         self.assertLess(html.index('id="method"'), html.index('id="results"'))
@@ -115,7 +117,7 @@ class WebsiteTests(unittest.TestCase):
 
         self.assertEqual(
             [case["task"] for case in cases],
-            ["xsum", "travel", "aeslc"],
+            ["xsum", "travel"],
         )
         self.assertEqual(showcase["metadata"]["protocols"]["xsum-6"]["nfe"], 8)
         self.assertEqual(
@@ -128,6 +130,7 @@ class WebsiteTests(unittest.TestCase):
             ],
             1,
         )
+        self.assertNotIn("aeslc-0", showcase["metadata"]["protocols"])
 
         for case in cases:
             dsl_run = case["dsl"]["run"]
@@ -143,6 +146,9 @@ class WebsiteTests(unittest.TestCase):
             self.assertTrue(case["llada"]["output"])
 
         travel = next(case for case in cases if case["task"] == "travel")
+        summary = next(case for case in cases if case["task"] == "xsum")
+        self.assertGreater(len(summary["prompt"]), 5_000)
+        self.assertIn(summary["source"], summary["prompt"])
         self.assertEqual(travel["key"], "travel-anchored-1-seed1")
         self.assertEqual(travel["dsl"]["run"]["seed"], 1)
         self.assertEqual(travel["plan_evaluation"]["dsl"]["day_sections"], 3)
@@ -151,6 +157,10 @@ class WebsiteTests(unittest.TestCase):
             0.0,
         )
         self.assertNotIn("and and", travel["dsl"]["output"].lower())
+        self.assertNotIn(
+            "mailbox",
+            json.dumps(showcase).lower(),
+        )
 
     def test_release_excludes_large_or_runtime_only_artifacts(self):
         self.assertFalse(

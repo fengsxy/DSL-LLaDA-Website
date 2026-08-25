@@ -15,7 +15,6 @@ protocols on:
 
 - XSum summarization at NFE 8
 - Three-day Shanghai trip planning at NFE 32
-- AESLC subject generation at NFE 8
 
 All displayed generations and intermediate states are frozen traces produced
 by the public
