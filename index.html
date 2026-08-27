@@ -2163,8 +2163,8 @@
               <h2 id="scope-title">Where continuous 8B diffusion excels.</h2>
             </div>
             <p class="section-lead">
-              Task structure, explicit constraints, and compute budget
-              determine which inference path is most effective.
+              Task structure and compute budget determine where continuous
+              inference provides the strongest gains.
             </p>
           </div>
           <div class="scope-list">
@@ -2174,25 +2174,6 @@
                 SDE delivers its largest gains at NFE 16 or below on
                 source-anchored generation, where context stabilizes joint
                 denoising.
-              </p>
-            </article>
-            <article class="scope-item">
-              <h3>Constrained generation provides anchors</h3>
-              <p>
-                Explicit output constraints add structure beyond source
-                context. With a one-sentence instruction, a terminal period can
-                emerge early as a high-confidence endpoint in the soft
-                trajectory, helping bidirectional denoising refine the text
-                around that boundary while every position remains editable.
-              </p>
-            </article>
-            <article class="scope-item">
-              <h3>High NFE and open-ended generation</h3>
-              <p>
-                At NFE 64, vanilla LLaDA can match or exceed SDE on long-reference
-                PubMed and arXiv once outputs reach reference length.
-                Unconstrained creative prompts remain challenging because
-                parallel updates can converge on semantic attractors.
               </p>
             </article>
           </div>

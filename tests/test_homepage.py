@@ -211,8 +211,10 @@ class WebsiteTests(unittest.TestCase):
             self.assertIn(word, html)
         self.assertIn("99.85%", html)
         self.assertIn("88.01%", html)
-        self.assertIn("Constrained generation provides anchors", html)
-        self.assertIn("terminal period can", html)
+        self.assertNotIn("Constrained generation provides anchors", html)
+        self.assertNotIn("terminal period can", html)
+        self.assertNotIn("High NFE and open-ended generation", html)
+        self.assertNotIn("semantic attractors", html)
         self.assertIn("Adjacent-word repetition", html)
         self.assertIn("Exact adjacent duplicates", html)
 
