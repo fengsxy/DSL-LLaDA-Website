@@ -2163,17 +2163,34 @@
               <h2 id="scope-title">Where continuous 8B diffusion excels.</h2>
             </div>
             <p class="section-lead">
-              Task structure and compute budget determine where continuous
-              inference provides the strongest gains.
+              The experiments identify three reliable gains from adapting an
+              8B masked diffusion model to continuous denoising.
             </p>
           </div>
           <div class="scope-list">
             <article class="scope-item">
-              <h3>Low NFE and grounded tasks</h3>
+              <h3>Few-step grounded generation</h3>
               <p>
-                SDE delivers its largest gains at NFE 16 or below on
-                source-anchored generation, where context stabilizes joint
-                denoising.
+                At NFE 8 and 16, DSL-LLaDA-SDE achieves the best ROUGE-1 on
+                XSum, CNN/DM, PubMed, and arXiv without length-control
+                heuristics.
+              </p>
+            </article>
+            <article class="scope-item">
+              <h3>Stable full-length decoding</h3>
+              <p>
+                Across 200 open-ended prompts, SDE generates more than 150
+                words with less than 9% adjacent-word repetition from NFE 8 to
+                128, avoiding both early termination and low-step loops.
+              </p>
+            </article>
+            <article class="scope-item">
+              <h3>Selective token correction</h3>
+              <p>
+                A single forward pass repairs corrupted tokens while preserving
+                more than 98% of clean positions. The same selective behavior
+                reduces word-level OCR error across all three English test
+                domains.
               </p>
             </article>
           </div>

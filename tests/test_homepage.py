@@ -215,6 +215,11 @@ class WebsiteTests(unittest.TestCase):
         self.assertNotIn("terminal period can", html)
         self.assertNotIn("High NFE and open-ended generation", html)
         self.assertNotIn("semantic attractors", html)
+        self.assertIn("Few-step grounded generation", html)
+        self.assertIn("Stable full-length decoding", html)
+        self.assertIn("Selective token correction", html)
+        self.assertIn("more than 150", html)
+        self.assertIn("less than 9% adjacent-word repetition", html)
         self.assertIn("Adjacent-word repetition", html)
         self.assertIn("Exact adjacent duplicates", html)
 
