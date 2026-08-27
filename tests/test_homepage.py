@@ -220,6 +220,10 @@ class WebsiteTests(unittest.TestCase):
         self.assertIn("Selective token correction", html)
         self.assertIn("more than 150", html)
         self.assertIn("less than 9% adjacent-word repetition", html)
+        self.assertIn("Soft Updates, Final Readout", html)
+        self.assertIn("Predict token probabilities at every denoising step", html)
+        self.assertIn("hard token IDs only at the end", html)
+        self.assertNotIn("Commit to hard discrete tokens only after", html)
         self.assertIn("Adjacent-word repetition", html)
         self.assertIn("Exact adjacent duplicates", html)
 

@@ -1889,10 +1889,11 @@
             </article>
             <article class="process-step">
               <span class="step-index">04</span>
-              <h3>Delayed Readout</h3>
+              <h3>Soft Updates, Final Readout</h3>
               <p>
-                Commit to hard discrete tokens only after continuous denoising
-                reaches the final decoding step.
+                Predict token probabilities at every denoising step and use
+                their weighted embedding to update the continuous state. Select
+                hard token IDs only at the end.
               </p>
             </article>
           </div>
