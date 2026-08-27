@@ -1949,10 +1949,11 @@
             </article>
             <article class="evidence-item">
               <span class="evidence-value">&lt;9%</span>
-              <h3>Repetition rate</h3>
+              <h3>Adjacent-word repetition</h3>
               <p>
-                Stays below 9% from NFE 8 to 128, while the length-controlled
-                EOS+block baseline exceeds 80% at NFE 8 and 16.
+                Exact adjacent duplicates stay below 9% of word transitions
+                from NFE 8 to 128, while the length-controlled EOS+block
+                baseline exceeds 80% at NFE 8 and 16.
               </p>
             </article>
             <article class="evidence-item">
@@ -1975,9 +1976,11 @@
               <h2 id="ocr-title">Repair the errors. Preserve the document.</h2>
             </div>
             <p class="section-lead">
-              The same continuous-noise adaptation repairs unreliable words
-              while leaving clean text intact. We test all three official
-              English HIPE-OCRepair domains, covering 233 documents.
+              Training on continuously noised token states teaches DSL-LLaDA
+              selective token-to-token editing: repair uncertain tokens while
+              preserving clean ones. Compared with uniform random-token
+              corruption, this behavior retains substantially more clean text
+              and transfers to real OCR repair.
             </p>
           </div>
 
@@ -2160,8 +2163,8 @@
               <h2 id="scope-title">Where continuous 8B diffusion excels.</h2>
             </div>
             <p class="section-lead">
-              Task structure and compute budget determine which inference path
-              is most effective.
+              Task structure, explicit constraints, and compute budget
+              determine which inference path is most effective.
             </p>
           </div>
           <div class="scope-list">
@@ -2171,6 +2174,16 @@
                 SDE delivers its largest gains at NFE 16 or below on
                 source-anchored generation, where context stabilizes joint
                 denoising.
+              </p>
+            </article>
+            <article class="scope-item">
+              <h3>Constrained generation provides anchors</h3>
+              <p>
+                Explicit output constraints add structure beyond source
+                context. With a one-sentence instruction, a terminal period can
+                emerge early as a high-confidence endpoint in the soft
+                trajectory, helping bidirectional denoising refine the text
+                around that boundary while every position remains editable.
               </p>
             </article>
             <article class="scope-item">

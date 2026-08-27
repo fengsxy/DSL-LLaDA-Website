@@ -196,8 +196,9 @@ class WebsiteTests(unittest.TestCase):
         )
 
         self.assertIn("Repair the errors. Preserve the document.", html)
-        self.assertIn("all three official", html)
-        self.assertIn("English HIPE-OCRepair domains", html)
+        self.assertIn("selective token-to-token editing", html)
+        self.assertIn("uniform random-token", html)
+        self.assertNotIn("covering 233 documents", html)
         self.assertIn("GLCO-1850-08-13-a-p0002_par58", html)
         for word in (
             "Euglish",
@@ -210,6 +211,10 @@ class WebsiteTests(unittest.TestCase):
             self.assertIn(word, html)
         self.assertIn("99.85%", html)
         self.assertIn("88.01%", html)
+        self.assertIn("Constrained generation provides anchors", html)
+        self.assertIn("terminal period can", html)
+        self.assertIn("Adjacent-word repetition", html)
+        self.assertIn("Exact adjacent duplicates", html)
 
         provenance = case["provenance"]
         record = case["official_test_record"]
